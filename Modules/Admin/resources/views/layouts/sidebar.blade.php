@@ -41,7 +41,7 @@
                         'admin.activeprofile',
                         'admin.nonActiveMembers',
                         'admin.viewuser',
-                    ]) && !request()->route('type') == 'profileUpdateRequest'
+                    ]) && request()->route('type') !== 'profileUpdateRequest'
                         ? 'menu-is-opening menu-open'
                         : '' }}">
 
@@ -55,7 +55,7 @@
                             'admin.activeprofile',
                             'admin.nonActiveMembers',
                             'admin.viewuser',
-                        ]) && !request()->route('type') == 'profileUpdateRequest'
+                        ]) && request()->route('type') !== 'profileUpdateRequest'
                             ? 'active'
                             : '' }}">
                         <p class="d-flex align-items-center w-100">
