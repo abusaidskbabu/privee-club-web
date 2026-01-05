@@ -35,8 +35,16 @@
                                                 <td>{{ $key + 1 }}</td>
                                                 <td>{{ $val->user->first_name ?? '' }} {{ $val->user->last_name ?? '' }}
                                                 </td>
+
+                                                @php
+                                                    $imagePath =
+                                                        !empty($val->profile_image) &&
+                                                        file_exists(public_path($val->profile_image))
+                                                            ? $val->profile_image
+                                                            : 'uploads/blankImage/blank.jpg';
+                                                @endphp
                                                 <td>
-                                                    <img src="{{ url($val->profile_image) }}" width="50" height="50">
+                                                    <img src="{{ url($imagePath) }}" width="50" height="50">
                                                 </td>
                                                 <td>{{ optional($val->created_at)->format('d-m-Y H:i:s') }}</td>
                                                 <td>

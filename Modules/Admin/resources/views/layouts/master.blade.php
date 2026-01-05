@@ -83,9 +83,11 @@
     <script src="{{ url('assets/js/pages/dashboard.js') }}"></script>
     <!-- Custom Js File -->
     <script src="{{ url('assets/js/custom.js') }}"></script>
+    <script src="{{ url('assets/js/action.js') }}"></script>
 
     <!-- Toast js file -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script>
         @if (Session::has('message'))
             var type = "{{ Session::get('alert-type', 'info') }}";

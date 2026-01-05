@@ -155,9 +155,9 @@ div.dataTables_wrapper div.dataTables_filter label {
 }
 
 td select {
-    max-width: 150px;
+    /* max-width: 150px;
     display: block;
-    margin: auto;
+    margin: auto; */
 }
 
 .sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link.active,
@@ -434,4 +434,8 @@ img.animation__shake {
     font-weight: 600;
     border-radius: 25px;
     transition: 0.3s;
+}
+
+.action_table {
+    text-align: right !important;
 }
