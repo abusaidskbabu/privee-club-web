@@ -78,7 +78,7 @@
     <section class="content-header">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <h1>Ready Member Profile</h1>
-            <a href="{{ route('admin.ready.members') }}" class="back-btn">← Back</a>
+            <a href="{{ route('admin.ready.members') }}" class="back-btn  text-black">← Back</a>
         </div>
     </section>
 

@@ -8,7 +8,7 @@
          <div class="page-header" >
             <div class="container-fluid d-flex justify-content-between align-items-center">
                 <h3><i class="las la-user-plus"></i>Add/Update Report Reason</h3>
-                <button class="btn btn-primary">
+                <button class="btn btn-primary  text-black">
                     <a href="{{ route('admin.report.reason') }}" class="back-btn">← Back</a>
                 </button>
              </div>

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Validator;
 use Hash;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use  App\Models\{User,DeviceInfo,PrivacyPolicy,TermsCondition,AboutApp,ProfileTimer};
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;

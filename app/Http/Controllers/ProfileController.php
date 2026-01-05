@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\{UserIntrest,UserImage,User,LookngFor,City,Region,Nationality,SexOrientation,Zodiac,BodyType,UserRate,Notification, blockedUsers, RequestModel,ProfileTimer,DeviceInfo};
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use Hash;
 use Carbon\Carbon;

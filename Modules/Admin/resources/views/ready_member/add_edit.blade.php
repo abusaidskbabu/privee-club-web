@@ -96,7 +96,7 @@
                     <div class="container-fluid d-flex justify-content-between align-items-center">
                         <h3><i class="fas fa-user-plus"></i>
                             {{ isset($member) && $member->id ? 'Update Ready Member' : 'Add Ready Member' }}</h3>
-                        <button class="btn btn-primary">
+                        <button class="btn btn-primary text-black">
                             <a href="{{ route('admin.ready.members') }}" class="back-btn"
                                 style="color: black; text-decoration: none;">← Back</a>
                         </button>
