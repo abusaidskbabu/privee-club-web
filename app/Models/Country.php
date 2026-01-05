@@ -8,9 +8,9 @@ class Country extends Model
 {
     protected $table = 'countries';
     protected $guarded;
-    
+
     public function regions()
     {
-        return $this->hasMany(Region::class, 'country_id');
+        return $this->hasMany(Region::class, 'country_id')->whereNull('deleted_at');
     }
 }

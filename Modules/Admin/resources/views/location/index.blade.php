@@ -327,11 +327,11 @@
                                     $('.delete-city[data-id="' + id + '"]').closest(
                                         'tr').fadeOut();
                                 } else {
-                                    Swal.fire('Error!', response.message, 'error');
+                                    Swal.fire('Sorry!', response.message, 'error');
                                 }
                             },
                             error: function() {
-                                Swal.fire('Error!', 'Something went wrong.', 'error');
+                                Swal.fire('Sorry!', 'Something went wrong.', 'error');
                             }
                         });
                     }

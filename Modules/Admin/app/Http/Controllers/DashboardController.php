@@ -857,9 +857,9 @@ class DashboardController extends Controller
     public function locationManagement()
     {
         // Show all records - removed deleted_at filter to show all data
-        $countries = Country::orderByRaw('country IS NULL, country ASC')->get();
-        $regions = Region::with('country')->orderByRaw('region IS NULL, region ASC')->get();
-        $cities = City::with(['region', 'region.country'])->orderByRaw('city IS NULL, city ASC')->get();
+        $countries = Country::whereNull('deleted_at')->orderByRaw('country IS NULL, country ASC')->get();
+        $regions = Region::with('country')->orderByRaw('region IS NULL, region ASC')->where('deleted_at', null)->get();
+        $cities = City::with(['region', 'region.country'])->orderByRaw('city IS NULL, city ASC')->where('deleted_at', null)->get();
 
         return view('admin::location.index', compact('countries', 'regions', 'cities'));
     }
@@ -1042,7 +1042,6 @@ class DashboardController extends Controller
         try {
             $id = base64_decode($id);
             $city = City::find($id);
-
             if (!$city) {
                 return response()->json([
                     'status' => false,
