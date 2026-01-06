@@ -123,19 +123,16 @@
                         <div class="row align-items-center mb-4">
                             <div class="col-md-3 text-center">
                                 @php
-                                    $profileImage = optional($user->profile)->profile_image;
-
-                                    if ($profileImage && file_exists(public_path($profileImage))) {
-                                        $imageUrl = asset($profileImage);
-                                    } else {
-                                        $imageUrl = asset('uploads/blankImage/blank.jpg');
-                                    }
+                                    $imageUrl = asset(
+                                        ($img = preg_replace(
+                                            '#^public/#',
+                                            '',
+                                            optional($user->profile)->profile_image ?? '',
+                                        )) && file_exists(public_path($img))
+                                            ? $img
+                                            : 'uploads/blankImage/blank.jpg',
+                                    );
                                 @endphp
-                                {{-- <a href="{{ asset(optional($user->profile)->profile_image ?? 'uploads/blankImage/blank.jpg') }}"
-                                    target="_blank">
-                                    <img src="{{ asset(optional($user->profile)->profile_image ?? 'uploads/blankImage/blank.jpg') }}"
-                                        class="profile-img" alt="Profile Image" style="cursor: pointer;">
-                                </a> --}}
 
                                 <a href="{{ $imageUrl }}" target="_blank">
                                     <img src="{{ $imageUrl }}" class="profile-img" alt="Profile Image"
@@ -421,9 +418,9 @@
         </section>
     </div>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> --}}
 
     <script>
         $(document).ready(function() {
@@ -443,12 +440,41 @@
                     success: function(response) {
                         if (response.status) {
                             badge.removeClass('badge-success badge-danger badge-secondary');
-                            if (status == 1) badge.addClass('badge-success').text('Approved');
-                            else if (status == 2) badge.addClass('badge-danger').text(
-                                'Rejected');
-                            else badge.addClass('badge-secondary').text('Pending Review');
+
+                            if (status == 1) {
+                                badge.addClass('badge-success').text('Approved');
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success',
+                                    text: 'Status changed to Approved!',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                            } else if (status == 2) {
+                                badge.addClass('badge-danger').text('Rejected');
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success',
+                                    text: 'Status changed to Rejected!',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                            } else {
+                                badge.addClass('badge-secondary').text('Pending Review');
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success',
+                                    text: 'Status changed to Pending Review!',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                            }
                         } else {
-                            alert('⚠️ ' + response.message);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: response.message,
+                            });
                         }
                     },
                     error: function(xhr) {
@@ -459,6 +485,7 @@
             });
         });
     </script>
+
 
     <script>
         $(document).ready(function() {
@@ -478,12 +505,39 @@
                     success: function(response) {
                         if (response.status) {
                             badge.removeClass('badge-success badge-danger badge-secondary');
-                            if (status == 1) badge.addClass('badge-success').text('Approved');
-                            else if (status == 2) badge.addClass('badge-danger').text(
-                                'Rejected');
-                            else badge.addClass('badge-secondary').text('Pending Review');
+
+                            let statusText = '';
+                            let badgeClass = '';
+
+                            if (status == 1) {
+                                statusText = 'Approved';
+                                badgeClass = 'badge-success';
+                            } else if (status == 2) {
+                                statusText = 'Rejected';
+                                badgeClass = 'badge-danger';
+                            } else {
+                                statusText = 'Pending Review';
+                                badgeClass = 'badge-secondary';
+                            }
+
+                            badge.addClass(badgeClass).text(statusText);
+
+                            // Show SweetAlert success
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: `Status changed to ${statusText}!`,
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+
                         } else {
-                            alert('⚠️ ' + response.message);
+                            // Show SweetAlert error
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: response.message,
+                            });
                         }
                     },
                     error: function(xhr) {

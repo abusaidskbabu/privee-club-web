@@ -86,14 +86,22 @@
                                                 <td>{{ $user->member_number ?? '—' }}</td>
                                                 <td>
                                                     @php
-                                                        $profileImg = optional($user->profile)->profile_image
-                                                            ? asset(optional($user->profile)->profile_image)
-                                                            : asset('uploads/blankImage/blank.jpg');
-                                                    @endphp
 
+                                                        $profileImage = optional($user->profile)->profile_image;
+
+                                                        if (
+                                                            $profileImage &&
+                                                            Storage::disk('public')->exists($profileImage)
+                                                        ) {
+                                                            $profileImg = asset('storage/' . $profileImage);
+                                                        } else {
+                                                            $profileImg = asset('uploads/blankImage/blank.jpg');
+                                                        }
+                                                    @endphp
                                                     <img src="{{ $profileImg }}" alt="Profile Image"
                                                         style="height:80px; width:80px; border-radius:50%; object-fit:cover; border:2.5px solid #e1dbff; margin:0 auto;">
                                                 </td>
+
                                                 <td>{{ $user->profile_name ?? 'â€”' }}</td>
                                                 <td>{{ $user->gender ?? 'â€”' }}</td>
                                                 <td>{{ $user->email ?? 'â€”' }}</td>

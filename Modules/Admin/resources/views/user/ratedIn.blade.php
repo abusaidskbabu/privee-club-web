@@ -86,12 +86,17 @@
                                                 <td>{{ $user->member_number ?? '—' }}</td>
                                                 <td>
                                                     @php
-                                                        $profileImg = optional($user->profile)->profile_image
-                                                            ? asset(optional($user->profile)->profile_image)
-                                                            : asset('uploads/blankImage/blank.jpg');
+                                                        $imageUrl = asset(
+                                                            ($img = preg_replace(
+                                                                '#^public/#',
+                                                                '',
+                                                                optional($user->profile)->profile_image ?? '',
+                                                            )) && file_exists(public_path($img))
+                                                                ? $img
+                                                                : 'uploads/blankImage/blank.jpg',
+                                                        );
                                                     @endphp
-
-                                                    <img src="{{ $profileImg }}" alt="Profile Image"
+                                                    <img src="{{ $imageUrl }}" alt="Profile Image"
                                                         style="height:80px; width:80px; border-radius:50%; object-fit:cover; border:2.5px solid #e1dbff; margin:0 auto;">
                                                 </td>
                                                 <td>{{ $user->profile_name ?? 'â€”' }}</td>
