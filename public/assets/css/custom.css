@@ -473,3 +473,14 @@ button:focus {
 .btn-default {
     background: #e1e1e1;
 }
+
+#CreateModalOpen,
+.CreateModalOpen,
+#EditFormSubmitBtn,
+#CreateModalSubmitBtn {
+    color: #000 !important;
+}
+
+.btn-default {
+    background-color: #d9d9d9 !important;
+}

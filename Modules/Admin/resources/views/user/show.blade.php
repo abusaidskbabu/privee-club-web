@@ -122,10 +122,24 @@
                     <div class="card-body">
                         <div class="row align-items-center mb-4">
                             <div class="col-md-3 text-center">
-                                <a href="{{ asset(optional($user->profile)->profile_image ?? 'uploads/blankImage/blank.jpg') }}"
+                                @php
+                                    $profileImage = optional($user->profile)->profile_image;
+
+                                    if ($profileImage && file_exists(public_path($profileImage))) {
+                                        $imageUrl = asset($profileImage);
+                                    } else {
+                                        $imageUrl = asset('uploads/blankImage/blank.jpg');
+                                    }
+                                @endphp
+                                {{-- <a href="{{ asset(optional($user->profile)->profile_image ?? 'uploads/blankImage/blank.jpg') }}"
                                     target="_blank">
                                     <img src="{{ asset(optional($user->profile)->profile_image ?? 'uploads/blankImage/blank.jpg') }}"
                                         class="profile-img" alt="Profile Image" style="cursor: pointer;">
+                                </a> --}}
+
+                                <a href="{{ $imageUrl }}" target="_blank">
+                                    <img src="{{ $imageUrl }}" class="profile-img" alt="Profile Image"
+                                        style="cursor:pointer;">
                                 </a>
                                 <h4>Profile Image</h4>
                             </div>
@@ -164,10 +178,19 @@
                             </div>
 
                             <div class="col-md-3 text-center">
-                                <a href="{{ asset(optional($user->bestImage)->profile_image ?? 'uploads/blankImage/blank.jpg') }}"
-                                    target="_blank">
-                                    <img src="{{ asset(optional($user->bestImage)->profile_image ?? 'uploads/blankImage/blank.jpg') }}"
-                                        class="profile-img" alt="Profile Image" style="cursor: pointer;">
+                                @php
+                                    $bestImage = optional($user->bestImage)->profile_image;
+
+                                    if ($bestImage && file_exists(public_path($bestImage))) {
+                                        $imageUrl = asset($bestImage);
+                                    } else {
+                                        $imageUrl = asset('uploads/blankImage/blank.jpg');
+                                    }
+                                @endphp
+
+                                <a href="{{ $imageUrl }}" target="_blank">
+                                    <img src="{{ $imageUrl }}" class="profile-img" alt="Profile Image"
+                                        style="cursor:pointer;">
                                 </a>
                                 <h4>Best Image</h4>
                             </div>

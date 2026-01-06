@@ -27,18 +27,18 @@
 
                     <div class="form-group name_block">
                         <label>Name</label>
-                        <input type="text" class="form-control" name="name" required>
+                        <input type="text" class="form-control" name="name">
                     </div>
 
                     <div class="form-group">
                         <label>Value</label>
-                        <input type="text" class="form-control" name="value" required>
+                        <input type="text" class="form-control" name="value">
                     </div>
                 </div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="button" class="btn btn-primary" id="CreateModalSubmitBtn">Submit</button>
                 </div>
 
             </form>
