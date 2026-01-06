@@ -66,6 +66,11 @@ $(document).on('click', '.edit_modal_show', function(e) {
         }
     })
 });
+    $(document).on('click', '.CreateModalOpen', function(e) {
+        e.preventDefault();
+        $('#CreateModalOpen').modal('show');
+    });
+
 
 
 $(document).on('click', '#EditFormSubmitBtn', function(e){

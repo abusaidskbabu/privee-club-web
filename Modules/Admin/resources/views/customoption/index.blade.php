@@ -35,7 +35,7 @@
                     <div class="card-body">
                         <div class=" d-flex justify-content-between align-items-center mb-3">
                             <h5>Custom Options</h5>
-                            <button data-toggle="modal" data-target="#CreateModalOpen" class="btn btn-primary">
+                            <button class="btn btn-primary CreateModalOpen">
                                 <i class="fas fa-plus"></i> Add Option
                             </button>
 
