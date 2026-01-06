@@ -10,7 +10,7 @@
         <div class="content-header">
             <div class="container-fluid">
                 <div class="page-header">
-                    <div class="container-fluid d-flex justify-content-between align-items-center">
+                    <div class="container-fluid  d-flex justify-content-between align-items-center">
                         <h3><i class="fas fa-flag"></i> Nationalities Management</h3>
                     </div>
                 </div>
@@ -21,7 +21,7 @@
             <div class="container-fluid">
                 <div class="card mt-3">
                     <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class=" d-flex justify-content-between align-items-center mb-3">
                             <h5>Nationalities</h5>
                             <a href="{{ route('admin.add.update.nationality') }}" class="btn btn-primary">
                                 <i class="fas fa-plus"></i> Add Nationality

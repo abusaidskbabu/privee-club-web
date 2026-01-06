@@ -176,7 +176,7 @@
                 <div class="card mt-3">
                     <div class="card-body">
                         <!-- Global Toggle -->
-                        <div class="d-flex justify-content-between align-items-center mb-4 p-3"
+                        <div class=" d-flex justify-content-between align-items-center mb-4 p-3"
                             style="background: #f8f9fa; border-radius: 8px;">
                             <div>
                                 <label class="font-weight-bold mb-0">Show Fake Users on Mobile App</label>
@@ -190,7 +190,7 @@
                         </div>
 
                         <!-- Bulk Actions -->
-                        <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class=" d-flex justify-content-between align-items-center mb-3">
                             <div class="d-flex align-items-center gap-2">
                                 <select id="bulkAction" class="form-control" style="width: 200px;">
                                     <option value="">Select Action</option>

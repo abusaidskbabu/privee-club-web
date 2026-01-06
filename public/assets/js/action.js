@@ -1,13 +1,9 @@
 $(document).on('click', '#CreateModalSubmitBtn', function (e) {
     e.preventDefault();
-
     var $btn  = $(this);
     var $form = $('#CreateForm'); // ✅ GET FORM
-
     $btn.prop('disabled', true);
-
     var formData = new FormData($form[0]); // ✅ HTMLFormElement
-
     $.ajax({
         url: $form.attr('action'),
         type: $form.attr('method'),
@@ -17,7 +13,6 @@ $(document).on('click', '#CreateModalSubmitBtn', function (e) {
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
-
         success: function (response) {
             $btn.prop('disabled', false);
 
@@ -43,7 +38,6 @@ $(document).on('click', '#CreateModalSubmitBtn', function (e) {
                 });
             }
         },
-
         error: function (xhr) {
             $btn.prop('disabled', false);
             $('.text-danger').remove();
@@ -59,44 +53,27 @@ $(document).on('click', '#CreateModalSubmitBtn', function (e) {
 });
 
 
-
-
-
-
-
-
-
-
 $(document).on('click', '.edit_modal_show', function(e) {
     e.preventDefault();
-
-    var url = $(this).data('url'); 
-
+    let url = $(this).attr('data-url');
     $.ajax({
         url: url,
-        type: 'GET',
-        dataType: 'html',
+        type: "GET",
+        dataType: "html",
         success: function(data) {
-            // $('#editModal .modal-content').html(data);
+            $('#editModal .modal-content').html(data);
             $('#editModal').modal('show');
-        },
-        error: function() {
-            alert('Failed to load modal content.');
         }
-    });
+    })
 });
 
 
-
-
-
-
-$(document).on('click', '.EditFormSubmitBtn', function(e){
+$(document).on('click', '#EditFormSubmitBtn', function(e){
     e.preventDefault();
 
     var $btn  = $(this);
     var id  = $(this).data('id');
-    var $form = $('#EditForm'+id);
+    var $form = $('#EditForm');
 
     $btn.prop('disabled', true);
 
@@ -164,16 +141,6 @@ $(document).on('click', '.EditFormSubmitBtn', function(e){
         }
     });
 });
-
-
-
-
-
-
-
-
-
-
 
 
 $(document).on('click', '.deleteBtn', function(e){

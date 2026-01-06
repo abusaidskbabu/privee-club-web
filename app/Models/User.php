@@ -52,6 +52,10 @@ class User extends Authenticatable
         'is_fake',
         'is_active',
         'show_on_mobile',
+        'children',
+        'exercise',
+        'pets',
+        'income_level'
     ];
 
 
@@ -59,18 +63,18 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserImage::class, 'user_id', 'id');
     }
-    
+
     public function profile()
     {
         return $this->hasOne(UserImage::class, 'user_id', 'id')
             ->where(function ($q) {
                 $q->where(function ($x) {
                     $x->where('type', 0)
-                      ->where('profile_image_approval', 1);
+                        ->where('profile_image_approval', 1);
                 })
-                ->orWhere(function ($x) {
-                    $x->where('type', 3);
-                });
+                    ->orWhere(function ($x) {
+                        $x->where('type', 3);
+                    });
             })
             ->orderByRaw("
                 CASE
@@ -90,16 +94,16 @@ class User extends Authenticatable
 
 
 
-    public function receivedRatings(){
-        
+    public function receivedRatings()
+    {
+
         return $this->hasMany(UserRate::class, 'reciever_id');
-        
     }
 
-   public function intrest(){
-        
-        return $this->hasOne(UserIntrest::class, 'user_id','id');
-        
+    public function intrest()
+    {
+
+        return $this->hasOne(UserIntrest::class, 'user_id', 'id');
     }
 
     protected $hidden = [
@@ -117,7 +121,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'admin_status'=>'bool'
+            'admin_status' => 'bool'
         ];
     }
 }

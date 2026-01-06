@@ -93,7 +93,7 @@
         <div class="content-header">
             <div class="container-fluid">
                 <div class="page-header">
-                    <div class="container-fluid d-flex justify-content-between align-items-center">
+                    <div class="container-fluid  d-flex justify-content-between align-items-center">
                         <h3><i class="fas fa-user-plus"></i>
                             {{ isset($member) && $member->id ? 'Update Ready Member' : 'Add Ready Member' }}</h3>
                         <button class="btn btn-primary text-black">

@@ -59,6 +59,12 @@ return new class extends Migration
             $table->integer('hear_about_us')->nullable();
             $table->string('looking_for')->nullable();
             $table->string('remember_token')->nullable();
+
+            $table->integer('children')->nullable();
+            $table->integer('exercise')->nullable();
+            $table->integer('pets')->nullable();
+            $table->integer('income_level')->nullable();
+
             $table->timestamps();
         });
     }

@@ -439,3 +439,37 @@ img.animation__shake {
 .action_table {
     text-align: right !important;
 }
+
+#CreateForm {
+    text-align: left;
+}
+
+label:not(.form-check-label):not(.custom-file-label) {
+    font-weight: 500;
+    font-size: 15px;
+}
+
+.modal-header h4 {
+    font-size: 18px;
+    color: #333;
+}
+
+.btn:focus,
+.btn:active,
+.btn.active,
+.btn:active:focus,
+.btn:active:hover,
+.btn:focus-visible,
+button {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: transparent !important;
+}
+
+button:focus {
+    outline: none !important;
+}
+
+.btn-default {
+    background: #e1e1e1;
+}

@@ -10,7 +10,7 @@
         <div class="content-header">
             <div class="container-fluid">
                 <div class="page-header">
-                    <div class="container-fluid d-flex justify-content-between align-items-center">
+                    <div class="container-fluid  d-flex justify-content-between align-items-center">
                         <h3><i class="fas fa-globe"></i> Location Management</h3>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
 
                             <!-- Countries Tab -->
                             <div class="tab-pane fade show active" id="countries" role="tabpanel">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class=" d-flex justify-content-between align-items-center mb-3">
                                     <h5>Countries</h5>
                                     <a href="{{ route('admin.add.update.country') }}" class="btn btn-primary">
                                         <i class="fas fa-plus"></i> Add Country
@@ -98,7 +98,7 @@
 
                             <!-- Regions Tab -->
                             <div class="tab-pane fade" id="regions" role="tabpanel">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class=" d-flex justify-content-between align-items-center mb-3">
                                     <h5>Regions</h5>
                                     <a href="{{ route('admin.add.update.region') }}" class="btn btn-primary">
                                         <i class="fas fa-plus"></i> Add Region
@@ -148,7 +148,7 @@
 
                             <!-- Cities Tab -->
                             <div class="tab-pane fade" id="cities" role="tabpanel">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class=" d-flex justify-content-between align-items-center mb-3">
                                     <h5>Cities</h5>
                                     <a href="{{ route('admin.add.update.city') }}" class="btn btn-primary">
                                         <i class="fas fa-plus"></i> Add City

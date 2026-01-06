@@ -8,6 +8,7 @@
 
     <title>Privee Club</title>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
     <link rel="icon" href="{{ url('assets/images/favicon.svg') }}" type="image/png">
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&amp;display=fallback">
@@ -21,7 +22,7 @@
     <link rel="stylesheet" href="{{ url('assets/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ url('assets/css/adminlte.min2167.css?v=3.2.0') }}">
     <link rel="stylesheet" href="{{ url('assets/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
-    <link rel="stylesheet" href="{{ url('assets/css/custom.css') }}">
+
     <link rel="stylesheet" href="{{ url('assets/plugins/summernote/summernote-bs4.min.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" rel="stylesheet">
 
@@ -34,6 +35,7 @@
         href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
 
 
+    <link rel="stylesheet" href="{{ url('assets/css/custom.css') }}">
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -87,6 +89,7 @@
 
     <!-- Toast js file -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script>
         @if (Session::has('message'))

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{UserIntrest, UserImage, User, LookngFor, City, Region, Nationality, SexOrientation, Zodiac, BodyType, UserRate, Notification, blockedUsers, RequestModel, ProfileTimer, DeviceInfo, Children};
+use App\Models\{UserIntrest, UserImage, User, LookngFor, City, Region, Nationality, SexOrientation, Zodiac, BodyType, UserRate, Notification, blockedUsers, RequestModel, ProfileTimer, DeviceInfo, Children, CustomOption};
 use Illuminate\Support\Facades\Auth;
 use Validator;
 use Hash;
@@ -1047,6 +1047,34 @@ class ProfileController extends Controller
             ]);
         }
     }
+    public function CustomOptions()
+    {
+        $user = Auth::user();
+        $customOptions = CustomOption::where('status', 1)->select('id', 'value', 'name')->get();
+
+        $result = $customOptions
+            ->groupBy('name')
+            ->map(function ($items) {
+                return $items->values();
+            });
+
+        if (count($result) > 0) {
+            return response()->json([
+                'code' => 200,
+                'status' => true,
+                'message' => 'Childrens Fetch Sucessfully',
+                'data' => $result
+            ]);
+        } else {
+            return response()->json([
+                'code' => 404,
+                'status' => false,
+                'message' => 'Childrens not found.',
+                'data' => null
+            ]);
+        }
+    }
+
 
     // ****************************************************************************change language *********************************************************
     public function ChangeLanguage(request $request)

@@ -86,3 +86,4 @@ Route::get('get-bodytype', [UserController::class, 'bodyType']);
 Route::get('get-sexOrientation', [UserController::class, 'sexOrientation']);
 Route::get('get-zodiacSign', [UserController::class, 'zodiacSign']);
 Route::get('children-list', [ProfileController::class, 'ChildrenList']);
+Route::get('custom-options', [ProfileController::class, 'CustomOptions']);

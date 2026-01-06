@@ -213,6 +213,14 @@
                         <p>Send Notifications</p>
                     </a>
                 </li>
+
+                <li class="nav-item">
+                    <a href="{{ route('admin.custom-options.index') }}"
+                        class="nav-link {{ request()->routeIs('admin.custom-options.index') ? 'active' : '' }}">
+                        <i class="fa fa-cogs" aria-hidden="true"></i>
+                        <p>Custom Options</p>
+                    </a>
+                </li>
                 <!--<li class="nav-item">-->
                 <!--    <a href="{{ route('admin.report.reason') }}" class="nav-link {{ Request::is('admin.report.reason') ? 'active' : '' }}">-->
                 <!--        <i class="fas fa-ban"></i>-->

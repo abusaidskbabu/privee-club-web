@@ -1,7 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
-use Modules\Admin\Http\Controllers\{AdminController, DashboardController, CommonController, ChildrenController};
+use Modules\Admin\Http\Controllers\{AdminController, DashboardController, CommonController, ChildrenController, CustomOptionController};
 
 Route::get('/clear', function () {
     Artisan::call('config:clear');
@@ -32,6 +33,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::middleware('admin.access')->group(function () {
         Route::resource('children', ChildrenController::class);
+        Route::resource('custom-options', CustomOptionController::class);
+
 
         Route::get('logout', [AdminController::class, 'logout'])->name('logout');
         // through admin
