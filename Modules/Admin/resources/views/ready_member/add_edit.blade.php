@@ -110,9 +110,9 @@
                 <div class="tab-content" id="genderTabsContent">
                     <div class="tab-pane fade show active" id="male" role="tabpanel" aria-labelledby="male-tab">
                         @if ($errors->any())
-                            <div class="card  mt-3">
-                                <div class="card-body">
-                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <div class="card  m-0 alert show">
+                                <div class="card-body m-0 p-0">
+                                    <div class="alert alert-danger alert-dismissible fade show mb-0" role="alert">
                                         <ul class="mb-0">
                                             @foreach ($errors->all() as $error)
                                                 <li>{{ $error }}</li>

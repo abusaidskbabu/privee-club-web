@@ -196,7 +196,7 @@ class DashboardController extends Controller
 
     public function acceptUser()
     {
-        $currentTime   = Carbon::now();
+        $currentTime = Carbon::now();
         $profiletimers = (int) ProfileTimer::value('time');
 
         $Users = User::with([
@@ -208,35 +208,30 @@ class DashboardController extends Controller
             ->where('admin_status', 1)
             ->where('profile_approval', 0)
             ->whereNull('deleted_at')
-            ->orderByDesc('id')
+            ->orderBy('id', 'desc')
             ->get()
             ->map(function ($user) use ($profiletimers) {
 
-                // Default expiryTime
-                $user->expiryTime = null;
+                // Parse datetime correctly (Y-m-d H:i:s)
+                $approveTime = Carbon::createFromFormat('Y-m-d H:i:s', $user->admin_approve_time);
 
-                // Only calculate if approve time exists
-                if (!empty($user->admin_approve_time)) {
-                    $approveTime = Carbon::parse($user->admin_approve_time);
-                    $user->expiryTime = $approveTime->addHours($profiletimers);
-                }
+                // Add dynamic hours
+                $user->expiryTime = $approveTime->copy()->addHours($profiletimers);
 
                 return $user;
             })
+            //  Filter out expired users
             ->filter(function ($user) use ($currentTime) {
-
-                // keep users without approve time
-                if ($user->expiryTime === null) {
-                    return true;
-                }
-
-                // keep only non-expired users
                 return $user->expiryTime->greaterThan($currentTime);
             })
-            ->values();
+            ->values(); // reset array index
+
+        var_dump($Users);
+        exit;
 
         return view('admin::user.acceptUser', compact('Users'));
     }
+
 
 
 
@@ -1077,7 +1072,7 @@ class DashboardController extends Controller
     public function nationalitiesManagement()
     {
         // Show all records - removed deleted_at filter to show all data
-        $nationalities = Nationality::orderByRaw('nationality IS NULL, nationality ASC')->whereNull('deleted_at')->get();
+        $nationalities = Nationality::orderByRaw('nationality IS NULL, nationality ASC')->get();
 
         return view('admin::nationality.index', compact('nationalities'));
     }
