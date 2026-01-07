@@ -21,7 +21,7 @@
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
-                <div class="page-header">
+                <div class="page-header-changed">
                     <div class="container-fluid">
                         <h3><i class="fas fa-flag"></i> Custom Options Management</h3>
                     </div>

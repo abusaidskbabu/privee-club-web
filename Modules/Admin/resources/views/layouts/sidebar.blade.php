@@ -11,7 +11,7 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <div class="d-flex">
         <a href="{{ url('admin/dashboard') }}" class="brand-link left_sidebar_img">
-            <img src="{{ url('assets/images/Frame.png') }}" alt="AdminLTE Logo" style="width:75px;" class="brand-image">
+            <img src="{{ url('assets/images/Frame.png') }}" alt="AdminLTE Logo" class="brand-image image_sidebar">
             &nbsp;<span class="brand-text font-weight-bold"><b>Privee</b></span>
         </a>
     </div>
@@ -58,8 +58,9 @@
                         ]) && request()->route('type') !== 'profileUpdateRequest'
                             ? 'active'
                             : '' }}">
-                        <p class="d-flex align-items-center w-100">
-                            <i class="fa-solid fa-users mr-2"></i>
+
+                        <i class="fa-solid fa-users mr-2"></i>
+                        <p class="align-items-center w-100">
                             Users Management
                             <i class="fas fa-angle-right right ml-auto"></i>
                         </p>

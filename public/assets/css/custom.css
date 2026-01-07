@@ -186,7 +186,7 @@ td select {
     max-width: 100%;
     max-height: 50px !important;
     margin: 0px !important;
-    padding: 0px 20px;
+    padding: 0px 0px;
 }
 
 [class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link:focus,
@@ -495,4 +495,8 @@ button:focus {
 .toggle_button:hover {
     background: none !important;
     border: none !important;
+}
+
+.brand-image_sidebar {
+    width: 75px !important;
 }

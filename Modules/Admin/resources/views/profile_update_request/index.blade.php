@@ -113,7 +113,7 @@
 
                                 $("#row-" + id).fadeOut(300, function() {
                                     $(this).remove();
-                                    location.reload();
+                                    // location.reload();
                                 });
 
                             } else {
