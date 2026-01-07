@@ -287,10 +287,19 @@
                                 <div class="row">
                                     @forelse($user->images->where('type',1) as $img)
                                         <div class="col-md-3 col-6 mb-3 text-center">
-                                            <a href="{{ asset($img->profile_image) }}" target="_blank">
-                                                <img src="{{ asset($img->profile_image) }}" class="user-image"
-                                                    alt="" style="cursor: pointer;">
+                                            @php
+                                                $image =
+                                                    !empty($img->profile_image) &&
+                                                    file_exists(public_path($img->profile_image))
+                                                        ? $img->profile_image
+                                                        : 'uploads/blankImage/blank.jpg';
+                                            @endphp
+
+                                            <a href="{{ asset($image) }}" target="_blank">
+                                                <img src="{{ asset($image) }}" class="user-image" alt="Profile Image"
+                                                    style="cursor: pointer;">
                                             </a>
+
                                         </div>
                                     @empty
                                         <div class="col-12 text-center text-muted">No private images found.</div>

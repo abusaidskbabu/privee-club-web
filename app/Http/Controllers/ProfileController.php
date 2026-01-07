@@ -430,7 +430,7 @@ class ProfileController extends Controller
 
                 $savedImages[] = UserImage::create([
                     'user_id' => $user->id,
-                    'profile_image' => 'public/uploads/private_image/' . $name,
+                    'profile_image' => 'uploads/private_image/' . $name,
                     'type' => 1,
                 ]);
             }
@@ -743,7 +743,7 @@ class ProfileController extends Controller
             $path  = public_path('uploads/users/');
             $image->move($path, $name);
 
-            $userimage->profile_image = 'public/uploads/users/' . $name;
+            $userimage->profile_image = 'uploads/users/' . $name;
             $userimage->profile_image_approval = 0;
             $userimage->save();
         }

@@ -899,7 +899,7 @@ class HomeController extends Controller
             $img->move($path, $name);
 
             // store relative path for DB
-            $imagePath = 'public/uploads/story_image/' . $name;
+            $imagePath = 'uploads/story_image/' . $name;
         }
 
         $status = UserStatus::create([

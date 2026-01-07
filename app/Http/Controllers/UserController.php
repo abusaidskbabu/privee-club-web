@@ -62,7 +62,7 @@ class UserController extends Controller
                 $name  = time() . '.' . $image->getClientOriginalExtension();
                 $path = public_path('uploads/users/');
                 $image->move($path, $name);
-                $user->profile_image = 'public/uploads/users/' . $name;
+                $user->profile_image = 'uploads/users/' . $name;
                 $user->save();
             };
             return response()->json(['status' => true, 'status_code' => 200, 'message' => "Selfie uploded succesfully", 'data' => $user], 200);
@@ -117,7 +117,7 @@ class UserController extends Controller
                         'type' => 3
                     ],
                     [
-                        'profile_image' => 'public/uploads/public_image/' . $name
+                        'profile_image' => 'uploads/public_image/' . $name
                     ]
                 );
 
@@ -551,7 +551,7 @@ class UserController extends Controller
                 $savedImages[] = UserImage::create([
                     'user_id' => $user->id,
                     'type' => 2,
-                    'profile_image' => 'public/uploads/public_image/' . $name,
+                    'profile_image' => 'uploads/public_image/' . $name,
                 ]);
             }
 

@@ -32,7 +32,7 @@
                                     <tbody>
                                         @foreach ($allRequest as $key => $val)
                                             <tr id="row-{{ $val->id }}">
-                                                <td class="serial">{{ $key + 1 }}</td>
+                                                <td>{{ $key + 1 }}</td>
                                                 <td>{{ $val->user->first_name ?? '' }} {{ $val->user->last_name ?? '' }}
                                                 </td>
 
@@ -75,6 +75,7 @@
         </section>
     </div>
 @section('script')
+
     <script>
         $(document).on('click', '.action-btn', function() {
 
@@ -112,7 +113,7 @@
 
                                 $("#row-" + id).fadeOut(300, function() {
                                     $(this).remove();
-                                    updateSerialNumbers();
+                                    location.reload();
                                 });
 
                             } else {
@@ -128,12 +129,6 @@
             });
 
         });
-
-        function updateSerialNumbers() {
-            $('.commontable tbody tr').each(function(index) {
-                $(this).find('.serial').text(index + 1);
-            });
-        }
     </script>
 @endsection
 @endsection
