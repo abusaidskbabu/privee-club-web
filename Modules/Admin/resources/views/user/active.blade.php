@@ -118,7 +118,7 @@
 
 
                                                     <button href="javascript:void(0)" style="float: left;margin-right: 1px;"
-                                                        class="deleteBtn btn btn-sm btn-danger delete-btn "
+                                                        class=" btn btn-sm btn-danger delete-btn "
                                                         data-id="{{ $user->id }}"><i class="ph ph-trash"></i></button>
                                                 </td>
                                             </tr>
@@ -178,8 +178,12 @@
         document.addEventListener("DOMContentLoaded", function() {
             @foreach ($Users as $user)
                 (function() {
-                    let expiryTime = new Date("{{ $user->expiryTime }}").getTime();
                     let timerElement = document.getElementById("timer-{{ $user->id }}");
+
+                    // 👉 FIX: stop if element does not exist
+                    if (!timerElement) return;
+
+                    let expiryTime = new Date("{{ $user->expiryTime }}").getTime();
 
                     let timer = setInterval(function() {
                         let now = new Date().getTime();
@@ -189,24 +193,19 @@
                             clearInterval(timer);
                             timerElement.innerHTML = "Expired";
                             timerElement.className = "timer expired";
-                        } else {
-                            // Time calculations
-                            let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 *
-                                60));
-                            let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                            let seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                            if (hours >= 18) {
-                                timerElement.className = "timer green";
-                            } else if (hours >= 6) {
-                                timerElement.className = "timer orange";
-                            } else {
-                                timerElement.className = "timer red";
-                            }
-
-
-                            timerElement.innerHTML = `${hours}h ${minutes}m ${seconds}s`;
+                            return;
                         }
+
+                        let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                        timerElement.className =
+                            hours >= 18 ? "timer green" :
+                            hours >= 6 ? "timer orange" :
+                            "timer red";
+
+                        timerElement.innerHTML = `${hours}h ${minutes}m ${seconds}s`;
                     }, 1000);
                 })();
             @endforeach

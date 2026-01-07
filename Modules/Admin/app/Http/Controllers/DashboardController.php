@@ -154,7 +154,7 @@ class DashboardController extends Controller
             $q->where('type', 0);
         }, 'profile'])
             ->where('admin_status', 0)
-            ->where('hear_about_us', '!=', '')
+            ->whereNotNull('hear_about_us')
             ->whereNull('deleted_at')
             ->orderBy('id', 'desc')
             ->get();
@@ -198,7 +198,6 @@ class DashboardController extends Controller
     {
         $currentTime   = Carbon::now();
         $profiletimers = (int) ProfileTimer::value('time');
-
         $Users = User::with([
             'images' => function ($q) {
                 $q->where('type', 0);
