@@ -167,9 +167,9 @@
                                             <th>User Name</th>
                                             <th>Gender</th>
                                             <th>Email</th>
-                                            {{-- <th>Mobile</th> --}}
+                                            <th>Mobile</th>
                                             <th>Registered On</th>
-                                            <th>Remaining Timing</th>
+                                            {{-- <th>Remaining Timing</th> --}}
 
                                             <th class="text-center">Action</th>
                                         </tr>
@@ -197,12 +197,17 @@
                                                 <td>{{ $user->profile_name ?? 'â€”' }}</td>
                                                 <td>{{ $user->gender ?? 'â€”' }}</td>
                                                 <td>{{ $user->email ?? 'â€”' }}</td>
-                                                {{-- <td>{{ $user->mobile_no ?? 'â€”' }}</td> --}}
+                                                <td>{{ $user->mobile_no ?? 'â€”' }}</td>
                                                 <td>{{ $user->created_at ? $user->created_at->format('d M Y') : 'â€”' }}
+
+                                                    <span id="timer-{{ $user->id }}" class="timer"
+                                                        style="display: none;"></span>
                                                 </td>
-                                                <td>
+
+
+                                                {{-- <td>
                                                     <span id="timer-{{ $user->id }}" class="timer"></span>
-                                                </td>
+                                                </td> --}}
 
                                                 <td class="text-center action-icons" style="min-width: 70px;">
                                                     <a class="btn btn-warning btn-sm showBtn show-btn"

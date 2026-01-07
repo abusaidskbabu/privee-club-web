@@ -7,12 +7,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>Privee Club</title>
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="{{ url('assets/js/jquery-3.7.0.min.js') }}"></script>
     <link rel="icon" href="{{ url('assets/images/favicon.svg') }}" type="image/png">
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&amp;display=fallback">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css')}}">
+
+    <link rel="stylesheet" href="{{ url('assets/css/ionicons.min.css') }}">
     <link rel="stylesheet"
         href="{{ url('assets/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
     <link rel="stylesheet" href="{{ url('assets/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
@@ -23,34 +24,21 @@
     <link rel="stylesheet" href="{{ url('assets/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
     <link rel="stylesheet" href="{{ url('assets/css/custom.css') }}">
     <link rel="stylesheet" href="{{ url('assets/plugins/summernote/summernote-bs4.min.css') }}">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" rel="stylesheet">
-
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jquery-knob@1.2.13/dist/jquery.knob.min.js"></script>
+    <link href="{{ url('assets/css/toastr.css') }}" rel="stylesheet">
+    <script src="{{ url('assets/js/sweetalert2.js') }}"></script>
+    <script src="{{ url('assets/js/moment.min.js') }}"></script>
+    <script src="{{ url('assets/js/daterangepicker.min.js') }}"></script>
+    <script src="{{ url('assets/js/jquery.knob.min.js') }}"></script>
     <link rel="stylesheet" type="text/css"
         href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
-
-
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         <!-- <div class="preloader flex-column justify-content-center align-items-center"> <img class="animation__shake" src="{{ asset('public/webassets/images/svg-images/logo-icon.png') }}" alt="Annuenr Logo" width="5%"> </div> -->
-
-        <!-- header code here -->
         @include('admin::layouts.header')
-
-        <!-- sidebar code starts here -->
         @include('admin::layouts.sidebar')
-
-
-        <!-- middlecontent starts here -->
         @yield('content')
-
-        <!-- footer code start here -->
         @include('admin::layouts.footer')
 
         <aside class="control-sidebar control-sidebar-dark"> </aside>
@@ -62,32 +50,24 @@
     </script>
     <script src="{{ url('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
-    <!-- Include Select2 JS -->
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>-->
-
     <!-- datatable scripts -->
     <script src="{{ url('assets/plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ url('assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
     <script src="{{ url('assets/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
     <script src="{{ url('assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
 
-    <!-- Sweet-alert-script -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <!-- Summernote-script -->
     <script src="{{ url('assets/plugins/summernote/summernote-bs4.min.js') }}"></script>
-
-
     <script src="{{ url('assets/js/adminlte2167.js?v=3.2.0') }}"></script>
     <script src="{{ url('assets/js/demo.js') }}"></script>
     <script src="{{ url('assets/js/pages/dashboard.js') }}"></script>
-    <!-- Custom Js File -->
     <script src="{{ url('assets/js/custom.js') }}"></script>
     <script src="{{ url('assets/js/action.js') }}"></script>
 
-    <!-- Toast js file -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <script src="{{ url('assets/js/toastr.min.js') }}"></script>
+    <script src="{{ url('assets/js/bootstrap.min.js') }}"></script>
     <script>
         @if (Session::has('message'))
             var type = "{{ Session::get('alert-type', 'info') }}";

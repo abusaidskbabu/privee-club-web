@@ -32,7 +32,7 @@
                                     <tbody>
                                         @foreach ($allRequest as $key => $val)
                                             <tr id="row-{{ $val->id }}">
-                                                <td>{{ $key + 1 }}</td>
+                                                <td class="serial">{{ $key + 1 }}</td>
                                                 <td>{{ $val->user->first_name ?? '' }} {{ $val->user->last_name ?? '' }}
                                                 </td>
 
@@ -56,8 +56,7 @@
                                                         class="btn btn-warning btn-sm showBtn show-btn"><i
                                                             class="ph ph-eye"></i></a>
 
-                                                    <button
-                                                        class="ms-2 deleteBtn btn btn-sm btn-danger delete-btn action-btn"
+                                                    <button class="ms-2 btn btn-sm btn-danger delete-btn action-btn"
                                                         data-id="{{ $val->id }}" data-status="2">
                                                         <i class="ph ph-trash"></i>
                                                     </button>
@@ -113,6 +112,7 @@
 
                                 $("#row-" + id).fadeOut(300, function() {
                                     $(this).remove();
+                                    updateSerialNumbers();
                                 });
 
                             } else {
@@ -128,6 +128,12 @@
             });
 
         });
+
+        function updateSerialNumbers() {
+            $('.commontable tbody tr').each(function(index) {
+                $(this).find('.serial').text(index + 1);
+            });
+        }
     </script>
 @endsection
 @endsection
