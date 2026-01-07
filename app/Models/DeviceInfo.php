@@ -8,9 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class DeviceInfo extends Model
 {
     use SoftDeletes;
-    protected $table= 'Device_info';
+    protected $table = 'device_info';
 
     protected $guarded = [];
-
-    
 }
