@@ -248,7 +248,7 @@
                                                     <span class="badge badge-warning">No</span>
                                                 @endif
                                             </td>
-                                            <td class="text-center action-icons" style="min-width: 130px;">
+                                            <td class="text-center action-icons" style="min-width: 150px;">
 
                                                 <a class="btn btn-warning btn-sm showBtn show-btn"
                                                     href="{{ route('admin.view.ready.member', base64_encode($member->id)) }}"
@@ -259,7 +259,8 @@
                                                     class="btn btn-warning btn-sm showBtn edit-btn" title="Edit">
                                                     <i class="ph ph-pencil-simple"></i>
                                                 </a>
-                                                <a href="javascript:void(0)" class="toggle-status"
+                                                <a href="javascript:void(0)"
+                                                    class="btn btn-warning toggle-status toggle_button"
                                                     data-id="{{ base64_encode($member->id) }}" title="Toggle Status">
                                                     <i
                                                         class="fa {{ $member->is_active == 1 ? 'ph ph-toggle-right' : 'ph ph-toggle-left' }}"></i>

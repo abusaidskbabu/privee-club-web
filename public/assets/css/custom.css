@@ -484,3 +484,15 @@ button:focus {
 .btn-default {
     background-color: #d9d9d9 !important;
 }
+
+.toggle_button {
+    background: none !important;
+    border: none !important;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+}
+
+.toggle_button:hover {
+    background: none !important;
+    border: none !important;
+}
