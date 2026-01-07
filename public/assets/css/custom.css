@@ -235,7 +235,7 @@ table td a,
 }
 
 table.dataTable td {
-    text-align: center;
+    /* text-align: center; */
 }
 
 img.user-img.img-css {
