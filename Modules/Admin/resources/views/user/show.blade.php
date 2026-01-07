@@ -269,7 +269,7 @@
                             <!-- Public Images -->
                             <div class="tab-pane fade" id="public">
                                 <div class="row">
-                                    @forelse($user->images->where('type',2) as $img)
+                                    @forelse($user->images->where('type', 3) as $img)
                                         <div class="col-md-3 col-6 mb-3 text-center">
                                             <a href="{{ asset($img->profile_image) }}" target="_blank">
                                                 <img src="{{ asset($img->profile_image) }}" class="user-image"
