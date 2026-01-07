@@ -209,7 +209,7 @@
                                                         href="{{ route('admin.viewuser', [$user->id, 'acceptUser']) }}"><i
                                                             class="ph ph-eye"></i></a>
                                                     <button href="javascript:void(0)"
-                                                        class="deleteBtn btn btn-sm btn-danger delete-btn "
+                                                        class=" btn btn-sm btn-danger delete-btn "
                                                         data-id="{{ $user->id }}"><i class="ph ph-trash"></i></button>
                                                 </td>
                                             </tr>

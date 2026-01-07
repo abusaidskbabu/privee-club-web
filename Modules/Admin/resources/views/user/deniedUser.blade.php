@@ -114,7 +114,7 @@
 
 
                                                     <button href="javascript:void(0)" style="float: left;margin-right: 1px;"
-                                                        class="deleteBtn btn btn-sm btn-danger delete-btn "
+                                                        class=" btn btn-sm btn-danger delete-btn "
                                                         data-id="{{ $user->id }}"><i class="ph ph-trash"></i></button>
                                                 </td>
                                             </tr>
