@@ -1,8 +1,16 @@
 @extends('admin::layouts.master')
 @section('title', 'ðŸ†• New Users')
-@section('css')
-@endsection
 @section('content')
+    <style>
+        tbody img {
+            height: 80px;
+            width: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2.5px solid #e1dbff;
+            margin: 0 auto;
+        }
+    </style>
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
@@ -44,7 +52,7 @@
                                                             : 'uploads/blankImage/blank.jpg';
                                                 @endphp
                                                 <td>
-                                                    <img src="{{ url($imagePath) }}" width="50" height="50">
+                                                    <img src="{{ url($imagePath) }}">
                                                 </td>
                                                 <td>{{ optional($val->created_at)->format('d-m-Y H:i:s') }}</td>
                                                 <td>
