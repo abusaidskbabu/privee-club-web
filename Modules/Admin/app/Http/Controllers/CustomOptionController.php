@@ -74,7 +74,7 @@ class CustomOptionController extends Controller
             'type' => 'success',
             'return' => $customoption,
             'status' => 1,
-            'message' => 'CustomOption added Successfully !',
+            'message' => 'Custom Option added Successfully !',
         ], 200);
     }
 
@@ -117,7 +117,7 @@ class CustomOptionController extends Controller
         return response()->json([
             'type' => 'success',
             'status' => 1,
-            'message' => 'CustomOption updated successfully!',
+            'message' => 'Custom Option updated successfully!',
         ], 200);
     }
 
@@ -132,13 +132,13 @@ class CustomOptionController extends Controller
             return response()->json([
                 'type' => 'success',
                 'status' => 1,
-                'message' => 'CustomOption deleted successfully!',
+                'message' => 'Custom Option deleted successfully!',
             ], 200);
         } else {
             return response()->json([
                 'type' => 'error',
                 'status' => 0,
-                'message' => 'CustomOption not found',
+                'message' => 'Custom Option not found',
             ], 200);
         }
     }
