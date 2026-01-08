@@ -1,9 +1,9 @@
 $(document).on('click', '#CreateModalSubmitBtn', function (e) {
     e.preventDefault();
     var $btn  = $(this);
-    var $form = $('#CreateForm'); // ✅ GET FORM
+    var $form = $('#CreateForm'); 
     $btn.prop('disabled', true);
-    var formData = new FormData($form[0]); // ✅ HTMLFormElement
+    var formData = new FormData($form[0]); 
     $.ajax({
         url: $form.attr('action'),
         type: $form.attr('method'),
@@ -22,10 +22,12 @@ $(document).on('click', '#CreateModalSubmitBtn', function (e) {
                     icon: 'success',
                     title: 'Success',
                     text: response.message,
-                    timer: 1500,
+                    timer: 3000,
                     showConfirmButton: false,
                     position: 'center'
                 }).then(() => {
+                    console.log('reloading..');
+                    
                     location.reload();
                 });
             } else {
@@ -105,7 +107,7 @@ $(document).on('click', '#EditFormSubmitBtn', function(e){
                 icon: 'success',
                 title: 'Updated',
                 text: response.message,
-                timer: 1500,
+                timer: 3000,
                 showConfirmButton: false,
                 position: 'center'
             }).then(() => location.reload());
@@ -177,7 +179,7 @@ $(document).on('click', '.deleteBtn', function(e){
                             title: 'Deleted!',
                             text: response.message,
                             icon: 'success',
-                            timer: 1500,
+                            timer: 3000,
                             showConfirmButton: false
                         }).then(() => {
                             // remove the deleted row

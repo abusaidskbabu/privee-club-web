@@ -500,3 +500,7 @@ button:focus {
 .brand-image_sidebar {
     width: 75px !important;
 }
+
+#swal2-html-container {
+    font-size: 16px !important;
+}

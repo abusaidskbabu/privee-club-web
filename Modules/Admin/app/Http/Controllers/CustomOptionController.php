@@ -50,6 +50,15 @@ class CustomOptionController extends Controller
                 'errors' => $validator->errors(),
             ], 422);
         }
+        if ($request->parent_id < 1 && !$request->name) {
+            return response()->json([
+                'type' => 'error',
+                'status' => 0,
+                'message' => 'Please select parent or type name.',
+            ], 200);
+        }
+
+
         // $data = $request->except(['video', 'image']);
         $data = $request->all();
         $data['slug'] = $this->uniqueSlug($request->value);
@@ -95,7 +104,6 @@ class CustomOptionController extends Controller
     public function update(Request $request, string $id)
     {
         $validator = $this->Validation($request);
-
         if ($validator->fails()) {
             return response()->json([
                 'type' => 'error',
