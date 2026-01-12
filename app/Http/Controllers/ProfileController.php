@@ -518,6 +518,10 @@ class ProfileController extends Controller
             $sexuallorientation = SexOrientation::where('sex_orientation', $user->sexual_orientation)->first();
             $zodiacSign = Zodiac::where('Zodiac_Signs', $user->zodiac_sign)->first();
 
+            $children = CustomOption::where('id', $user->children)->select('id', 'value', 'name', 'parent_id')->first();
+            $exercise = CustomOption::where('id', $user->exercise)->select('id', 'value', 'name', 'parent_id')->first();
+            $pets = CustomOption::where('id', $user->pets)->select('id', 'value', 'name', 'parent_id')->first();
+            $income_level = CustomOption::where('id', $user->income_level)->select('id', 'value', 'name', 'parent_id')->first();
             $data   = [
                 "id"          => $user->id,
                 "first_name"  => $user->first_name,
@@ -539,6 +543,24 @@ class ProfileController extends Controller
                     "about_me" => $user->about_me,
                     "about_match" => $user->about_match,
                 ],
+                "custom_options" => [
+                    "children" => [
+                        "selected_id" => $user->children,
+                        "data" => CustomOption::where('parent_id', $children->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
+                    ],
+                    "exercise" => [
+                        "selected_id" => $user->exercise,
+                        "data" => CustomOption::where('parent_id', $exercise->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
+                    ],
+                    "pets" => [
+                        "selected_id" => $user->pets,
+                        "data" => CustomOption::where('parent_id', $pets->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
+                    ],
+                    "income_level" => [
+                        "selected_id" => $user->income_level,
+                        "data" => CustomOption::where('parent_id', $income_level->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
+                    ],
+                ],
                 "info" => [
                     "age" => $age,
                     "height" => $user->height,
@@ -554,6 +576,9 @@ class ProfileController extends Controller
                     "field_of_work" => $user->field_of_work,
                     "relationship_status" => $user->relationship_status,
                     "zodiac_sign" => $zodiacSign,
+
+
+
                 ],
 
                 "personal_information" => [
