@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{UserIntrest, UserImage, User, LookngFor, City, Region, Nationality, SexOrientation, Zodiac, BodyType, UserRate, Notification, blockedUsers, RequestModel, ProfileTimer, DeviceInfo, Children, CustomOption, Translation};
+use App\Models\{UserIntrest, UserImage, User, LookngFor, City, Region, Nationality, SexOrientation, Zodiac, BodyType, UserRate, Notification, blockedUsers, RequestModel, ProfileTimer, DeviceInfo, Children, Country, CustomOption, Translation};
 use Illuminate\Support\Facades\Auth;
 use Validator;
 use Hash;
@@ -485,17 +485,21 @@ class ProfileController extends Controller
         ], 200);
     }
     //******************************************************************************profile detail of user ***************************************************************************************************
-    public function profileDetail()
+    public function profileDetail(Request $request)
     {
+        $lang = $request->lang ?? 'da';
+        LookngFor::setLang($lang);
+        CustomOption::setLang($lang);
+
         try {
 
             $userid = Auth::id();
 
             $user = User::where('id', $userid)->first();
 
-            $countryid = DB::table('region')->where('region', $user->region)->value('country_id');
+            $countryid = Region::where('region', $user->region)->value('country_id');
 
-            $countryname = DB::table('countries')->where('id', $countryid)->value('short_name');
+            $countryname = Country::where('id', $countryid)->value('short_name');
 
             $age = Carbon::parse($user->dob)->age;
 
@@ -504,7 +508,7 @@ class ProfileController extends Controller
             $lookin_for = explode(',', $looking_forids);
 
 
-            $lookingforname = LookngFor::whereIn('id', $lookin_for)->pluck('looking_for');
+            $lookingforname = LookngFor::with('translations')->whereIn('id', $lookin_for)->whereNull('deleted_at')->orderBy('looking_for', 'asc')->select('looking_for', 'id')->get();
 
             $latestImage = UserImage::where('user_id', $userid)
                 ->where('type', 0)
@@ -537,18 +541,19 @@ class ProfileController extends Controller
 
             $userIntrest = UserIntrest::where('user_id', $userid)->first();
 
-            $body_type = BodyType::where('body_type', $user->body_type)->first();
-            $cityData = City::where('city', $user->city)->first();
-            $regionData = Region::where('region', $user->region)->first();
-            $nationality = Nationality::where('nationality', $user->nationality)->first();
-            $sexuallorientation = SexOrientation::where('sex_orientation', $user->sexual_orientation)->first();
-            $zodiacSign = Zodiac::where('Zodiac_Signs', $user->zodiac_sign)->first();
+            $body_type = BodyType::where('id', $user->body_type)->first();
+            $cityData = City::where('id', $user->city)->first();
+            $regionData = Region::where('id', $user->region)->first();
+            $nationality = Nationality::where('id', $user->nationality)->first();
+            $sexuallorientation = SexOrientation::where('id', $user->sexual_orientation)->first();
+            $zodiacSign = Zodiac::where('id', $user->zodiac_sign)->first();
 
             $children = CustomOption::where('id', $user->children)->select('id', 'value', 'name', 'parent_id')->first();
             $exercise = CustomOption::where('id', $user->exercise)->select('id', 'value', 'name', 'parent_id')->first();
             $pets = CustomOption::where('id', $user->pets)->select('id', 'value', 'name', 'parent_id')->first();
             $income_level = CustomOption::where('id', $user->income_level)->select('id', 'value', 'name', 'parent_id')->first();
-
+            $hair_color = CustomOption::with('translations')->where('id', $user->hair_color)->select('id', 'value', 'name', 'parent_id')->first();
+            $eye_color = CustomOption::with('translations')->where('id', $user->eye_color)->select('id', 'value', 'name', 'parent_id')->first();
 
             $data   = [
                 "id"          => $user->id,
@@ -574,27 +579,35 @@ class ProfileController extends Controller
                 "custom_options" => [
                     "children" => [
                         "selected_id" => $user->children,
-                        "data" => CustomOption::where('parent_id', $children?->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
+                        "data" => CustomOption::with('translations')->where('name', $children?->name)->where('status', 1)->select('id', 'value', 'name')->get(),
                     ],
                     "exercise" => [
                         "selected_id" => $user->exercise,
-                        "data" => CustomOption::where('parent_id', $exercise?->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
+                        "data" => CustomOption::with('translations')->where('name', $exercise?->name)->where('status', 1)->select('id', 'value', 'name')->get(),
                     ],
                     "pets" => [
                         "selected_id" => $user->pets,
-                        "data" => CustomOption::where('parent_id', $pets?->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
+                        "data" => CustomOption::with('translations')->where('name', $pets?->name)->where('status', 1)->select('id', 'value', 'name')->get(),
                     ],
                     "income_level" => [
                         "selected_id" => $user->income_level,
-                        "data" => CustomOption::where('parent_id', $income_level?->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
+                        "data" => CustomOption::with('translations')->where('name', $income_level?->name)->where('status', 1)->select('id', 'value', 'name')->get(),
+                    ],
+                    "hair_color" => [
+                        "selected_id" => $user->hair_color,
+                        "data" => CustomOption::with('translations')->where('name', $hair_color?->name)->where('status', 1)->select('id', 'value', 'name')->get(),
+                    ],
+                    "eye_color" => [
+                        "selected_id" => $user->eye_color,
+                        "data" => CustomOption::with('translations')->where('name', $eye_color?->name)->where('status', 1)->select('id', 'value', 'name')->get(),
                     ],
                 ],
                 "info" => [
                     "age" => $age,
                     "height" => $user->height,
                     "weight" => $user->weight,
-                    "hair_color" => $user->hair_color,
-                    "eye_color" => $user->eye_color,
+                    "hair_color" => $hair_color,
+                    "eye_color" => $eye_color,
                     "body_type" => $body_type,
                     "nationality" => $nationality,
                     "region" => $regionData,
@@ -604,9 +617,6 @@ class ProfileController extends Controller
                     "field_of_work" => $user->field_of_work,
                     "relationship_status" => $user->relationship_status,
                     "zodiac_sign" => $zodiacSign,
-
-
-
                 ],
 
                 "personal_information" => [

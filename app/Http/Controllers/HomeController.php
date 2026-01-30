@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use  App\Models\{User, LookngFor, UserRate, UserStatus, UserImage, ViewProfile, RequestModel, SeenStatus, Notification, UserReport, blockedUsers, RateUserProfile, ProfileTimer, CustomOption, UserLike, FavouriteUser};
+use  App\Models\{User, LookngFor, UserRate, UserStatus, UserImage, ViewProfile, RequestModel, SeenStatus, Notification, UserReport, blockedUsers, BodyType, City, RateUserProfile, ProfileTimer, CustomOption, UserLike, FavouriteUser, Nationality, Region, SexOrientation, Zodiac};
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -775,11 +775,20 @@ class HomeController extends Controller
             $exercise = CustomOption::where('id', $user->exercise)->select('id', 'value', 'name', 'parent_id')->first();
             $pets = CustomOption::where('id', $user->pets)->select('id', 'value', 'name', 'parent_id')->first();
             $income_level = CustomOption::where('id', $user->income_level)->select('id', 'value', 'name', 'parent_id')->first();
+            $hair_color = CustomOption::with('translations')->where('id', $user->hair_color)->select('id', 'value', 'name', 'parent_id')->first();
+            $eye_color = CustomOption::with('translations')->where('id', $user->eye_color)->select('id', 'value', 'name', 'parent_id')->first();
+
 
 
             $my_voted_users =  UserRate::where('sender_id', (string) $user->id)->orderBy('created_at', 'DESC')->get();
             $favorite_user = FavouriteUser::where('fav_to', (int)$user->id)->where('fav_by', $authuser->id)->first();
 
+            $body_type = BodyType::where('id', $user->body_type)->first();
+            $cityData = City::where('id', $user->city)->first();
+            $regionData = Region::where('id', $user->region)->first();
+            $nationality = Nationality::where('id', $user->nationality)->first();
+            $sexuallorientation = SexOrientation::where('id', $user->sexual_orientation)->first();
+            $zodiacSign = Zodiac::where('id', $user->zodiac_sign)->first();
 
             $data = [
                 "sender_id"   => $authuser->id,
@@ -806,19 +815,27 @@ class HomeController extends Controller
                 "custom_options" => [
                     "children" => [
                         "selected_id" => $user->children,
-                        "data" => CustomOption::with('translations')->where('parent_id', $user->children)->where('status', 1)->select('id', 'value', 'name')->get(),
+                        "data" => CustomOption::with('translations')->where('name', $children?->name)->where('status', 1)->select('id', 'value', 'name')->get(),
                     ],
                     "exercise" => [
                         "selected_id" => $user->exercise,
-                        "data" => CustomOption::with('translations')->where('parent_id', $exercise?->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
+                        "data" => CustomOption::with('translations')->where('name', $exercise?->name)->where('status', 1)->select('id', 'value', 'name')->get(),
                     ],
                     "pets" => [
                         "selected_id" => $user->pets,
-                        "data" => CustomOption::with('translations')->where('parent_id', $pets?->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
+                        "data" => CustomOption::with('translations')->where('name', $pets?->name)->where('status', 1)->select('id', 'value', 'name')->get(),
                     ],
                     "income_level" => [
                         "selected_id" => $user->income_level,
-                        "data" => CustomOption::with('translations')->where('parent_id', $income_level?->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
+                        "data" => CustomOption::with('translations')->where('name', $income_level?->name)->where('status', 1)->select('id', 'value', 'name')->get(),
+                    ],
+                    "hair_color" => [
+                        "selected_id" => $user->hair_color,
+                        "data" => CustomOption::with('translations')->where('name', $hair_color?->name)->where('status', 1)->select('id', 'value', 'name')->get(),
+                    ],
+                    "eye_color" => [
+                        "selected_id" => $user->eye_color,
+                        "data" => CustomOption::with('translations')->where('name', $eye_color?->name)->where('status', 1)->select('id', 'value', 'name')->get(),
                     ],
                 ],
                 "info" => [
@@ -826,16 +843,17 @@ class HomeController extends Controller
                     "age" => $age,
                     "height" => $user->height,
                     "weight" => $user->weight,
-                    "hair_color" => $user->hair_color,
-                    "eye_color" => $user->eye_color,
-                    "body_type" => $user->body_type,
-                    "nationality" => $user->nationality,
-                    "city" => $user->city,
-                    "sexual_orientation" => $user->sexual_orientation,
+                    "hair_color" => $hair_color,
+                    "eye_color" => $eye_color,
+                    "body_type" => $body_type,
+                    "nationality" => $nationality,
+                    "region" => $regionData,
+                    "city" => $cityData,
+                    "sexual_orientation" => $sexuallorientation,
                     "education" => $user->education,
                     "field_of_work" => $user->field_of_work,
                     "relationship_status" => $user->relationship_status,
-                    "zodiac_sign" => $user->zodiac_sign,
+                    "zodiac_sign" => $zodiacSign,
                     "admin_approve_time" => $user->admin_approve_time,
                 ],
                 "personal_information" => [
