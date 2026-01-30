@@ -672,60 +672,28 @@ class HomeController extends Controller
     {
         $lang = $request->lang ?? 'da';
         LookngFor::setLang($lang);
-        $data = LookngFor::with('translations')->whereNull('deleted_at')->orderBy('looking_for', 'asc')->get();
-
-        return response()->json([
-            "status_code" => 200,
-            "status" => true,
-            "lang" => $lang,
-            "message" => " LookngFor  detail retrive successfully",
-            "data" => $data
-        ], 200);
+        CustomOption::setLang($lang);
 
         try {
-
-
-
             $userid = $request->id;
             $latestimage2 = UserImage::where('user_id', $userid)->where('type', 0)->where('profile_image_approval', 1)->orderBy('created_at', 'DESC')->first();
             $bestImage2 = UserImage::where('user_id', $userid)->where('type', 3)->orderBy('created_at', 'ASC')->value('profile_image');
             $userImage2 = $latestimage2 ? $latestimage2->profile_image : $bestImage2;
-
             $user = User::where('id', $userid)->first();
-
             $age = Carbon::parse($user->dob)->age;
-
             $countryid = DB::table('region')->where('region', $user->region)->value('country_id');
-
             $countryname = DB::table('countries')->where('id', $countryid)->value('short_name');
-
             $looking_forids = $user->looking_for;
-            // string to array via explode fn
             $lookin_for = explode(',', $looking_forids);
-
-
-            // $lookingforname = LookngFor::whereIn('id', $lookin_for)
-            //     ->pluck('looking_for');
-            $lookingforname = LookngFor::with('translations')->whereIn('id', $lookin_for)->whereNull('deleted_at')->orderBy('looking_for', 'asc')->get();
-
-
-
-
+            $lookingforname = LookngFor::with('translations')->whereIn('id', $lookin_for)->whereNull('deleted_at')->orderBy('looking_for', 'asc')->select('looking_for', 'id')->get();
             $latestimagePublic = UserImage::where('user_id', $userid)->where('type', 0)->where('profile_image_approval', 1)->orderBy('created_at', 'DESC')->first();
             $bestImagePublic = UserImage::where('user_id', $userid)->where('type', 3)->orderBy('created_at', 'ASC')->value('profile_image');
             $userImagePublic = $latestimagePublic ? $latestimagePublic->profile_image : $bestImagePublic;
-            // fetching multiple image 
             $public_images = $userImagePublic;
-
-
-            // fetching multiple image 
             $bestimages = UserImage::select('id', 'user_id', 'profile_image as gallery_image')
                 ->where('user_id', $userid)
                 ->where('type', 0)
                 ->get();
-
-
-
             $privateImage = UserImage::select('id', 'user_id', 'profile_image as gallery_image')
                 ->where('user_id', $userid)
                 ->where('type', 1)
@@ -733,23 +701,16 @@ class HomeController extends Controller
 
 
             $name = $user->profile_name;
-
-            // rating ka funda
             $yesRatingAvg = UserRate::where('reciever_id', $userid)->where('reaction', 'YES')->count('points') ?? 0;
             $okRatingAvg = UserRate::where('reciever_id', $userid)->where('reaction', 'OK')->count('points') ?? 0;
             $maybeRatingAvg = UserRate::where('reciever_id', $userid)->where('reaction', 'Maybe')->count('points') ?? 0;
             $noRatingAvg = UserRate::where('reciever_id', $userid)->where('reaction', 'No')->count('points') ?? 0;
             $allRatings = UserRate::where('reciever_id', $userid)->get();
-
-
             // similar profile 
             $authuser = Auth::user();
-
             // Get opposite gender
             $oppositeGender = $authuser->gender === 'Male' ? 'Female' : 'Male';
-
             $rated_usersID = UserRate::where('sender_id', auth()->user()->id)->pluck('reciever_id');
-
             $similar_profile = User::where('id', '!=', $userid)
                 ->whereNotIn('id', $rated_usersID)
                 ->where('rejection_email_status', 0)
@@ -772,19 +733,12 @@ class HomeController extends Controller
                 unset($user->images);
                 return $user;
             });
-
-
             // view profile datat store
             $viewData = new ViewProfile;
             $viewData->view_id = $request->id;
             $viewData->viewer_id = $authuser->id;
             $viewData->save();
-
-
             $ratingreaction = UserRate::where('sender_id', $authuser->id)->where('reciever_id', $userid)->value('reaction');
-
-
-
             // request sended to user or not to acces private image 
             $requestSent = RequestModel::where('request_to', $user->id)
                 ->where('request_from', $authuser->id)
@@ -837,6 +791,7 @@ class HomeController extends Controller
                 "country"     => $countryname,
                 "rating_reaction" => $ratingreaction,
                 "age" => $age,
+                "lang" => $lang,
                 "user_image" => $userImage2,
                 "looking_for" => $lookingforname,
                 "rating_status" => $authuser->profie_rating_status,
@@ -851,19 +806,19 @@ class HomeController extends Controller
                 "custom_options" => [
                     "children" => [
                         "selected_id" => $user->children,
-                        "data" => CustomOption::where('parent_id', $children?->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
+                        "data" => CustomOption::with('translations')->where('parent_id', $user->children)->where('status', 1)->select('id', 'value', 'name')->get(),
                     ],
                     "exercise" => [
                         "selected_id" => $user->exercise,
-                        "data" => CustomOption::where('parent_id', $exercise?->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
+                        "data" => CustomOption::with('translations')->where('parent_id', $exercise?->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
                     ],
                     "pets" => [
                         "selected_id" => $user->pets,
-                        "data" => CustomOption::where('parent_id', $pets?->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
+                        "data" => CustomOption::with('translations')->where('parent_id', $pets?->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
                     ],
                     "income_level" => [
                         "selected_id" => $user->income_level,
-                        "data" => CustomOption::where('parent_id', $income_level?->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
+                        "data" => CustomOption::with('translations')->where('parent_id', $income_level?->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
                     ],
                 ],
                 "info" => [
