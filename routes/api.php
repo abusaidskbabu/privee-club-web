@@ -4,6 +4,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{AuthController, UserController, HomeController, ProfileController};
 
+
+
+
+
 // unauthorised routes
 Route::post('register-user', [AuthController::class, 'registerUSer']);
 Route::post('login', [AuthController::class, 'Login']);
@@ -15,6 +19,11 @@ Route::get('term-condition', [AuthController::class, 'terms']);
 Route::get('about-app', [AuthController::class, 'aboutApp']);
 Route::post('verify-email-otp', [AuthController::class, 'verifyEmailOtp']);
 
+
+Route::delete('delete-user-by-mail', [HomeController::class, 'deleteUserByMail']);
+Route::get('view-user/{id}', [ProfileController::class, 'viewUser'])->name('viewuser');
+
+
 // authorised routes
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
@@ -23,6 +32,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('home-data-list', [HomeController::class, 'homeList']);
     Route::post('view-detail', [HomeController::class, 'viewDetail']);
     Route::post('user-rating', [HomeController::class, 'userRate']);
+
+    Route::get('my-rated-members', [HomeController::class, 'myRatemembers']);
+
     Route::post('user-story', [HomeController::class, 'userStory']);
     Route::post('user-story-status', [HomeController::class, 'updateStoryStatus']);
     Route::post('user-story-delete', [HomeController::class, 'updateStoryDelete']);
@@ -42,6 +54,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('accept-request', [UserController::class, 'acceptRequest']);
     Route::post('like-user', [UserController::class, 'likeUser']);
     Route::get('like-user-list', [UserController::class, 'likeUserList']);
+    Route::get('accepted-user', [UserController::class, 'acceptUser']);
     Route::post('add-to-favourite', [UserController::class, 'addFavourite']);
     Route::get('add-to-favourite-list', [UserController::class, 'favUserList']);
     Route::get('get-report-reason', [UserController::class, 'getReportReason']);

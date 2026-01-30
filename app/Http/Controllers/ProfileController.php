@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{UserIntrest, UserImage, User, LookngFor, City, Region, Nationality, SexOrientation, Zodiac, BodyType, UserRate, Notification, blockedUsers, RequestModel, ProfileTimer, DeviceInfo, Children, CustomOption};
+use App\Models\{UserIntrest, UserImage, User, LookngFor, City, Region, Nationality, SexOrientation, Zodiac, BodyType, UserRate, Notification, blockedUsers, RequestModel, ProfileTimer, DeviceInfo, Children, CustomOption, Translation};
 use Illuminate\Support\Facades\Auth;
 use Validator;
 use Hash;
@@ -13,6 +13,23 @@ use Illuminate\Support\Facades\Cache;
 
 class ProfileController extends Controller
 {
+
+
+    public function viewUser($id)
+    {
+        $user = User::with('profile', 'bestImage')->where('id', $id)->first();
+        $rategiven = UserRate::with('ratedTo')->where('sender_id', $id)->get();
+        $raterecived = UserRate::with('ratedBy')->where('reciever_id', $id)->get();
+
+
+        return response()->json([
+            'status'      => true,
+            'status_code' => 200,
+            "user"     => $user,
+            "rategiven"     => $rategiven,
+            "raterecived"     => $raterecived,
+        ], 200);
+    }
 
     //************************************************************edit account ******************************************************************
     public function editAccount(Request $request)
@@ -319,6 +336,15 @@ class ProfileController extends Controller
 
             if ($request->filled('looking_for_ids')) {
                 $ids = $request->looking_for_ids;
+                // if (in_array(6, $ids)) {
+                //     $looking_for = LookngFor::all();
+                //     $ids = [];
+                //     foreach ($looking_for as $item) {
+                //         if ($item->id != 6) {
+                //             $ids[] = $item->id;
+                //         }
+                //     }
+                // }
                 $user->looking_for = implode(',', $ids); // 34
                 $user->save();
             } else {
@@ -522,6 +548,8 @@ class ProfileController extends Controller
             $exercise = CustomOption::where('id', $user->exercise)->select('id', 'value', 'name', 'parent_id')->first();
             $pets = CustomOption::where('id', $user->pets)->select('id', 'value', 'name', 'parent_id')->first();
             $income_level = CustomOption::where('id', $user->income_level)->select('id', 'value', 'name', 'parent_id')->first();
+
+
             $data   = [
                 "id"          => $user->id,
                 "first_name"  => $user->first_name,
@@ -537,8 +565,8 @@ class ProfileController extends Controller
                 "looking_for" => $lookingforname,
                 "profile_image" => $profileimage,
                 'profile_image_latest' => $latestImage ? $latestImage->profile_image : '',
-                'profile_image_latest_id' => $latestImage ? (string)$latestImage->id : '',
-                'profile_image_approval' => $latestImage ? $latestImage->profile_image_approval : '',
+                'profile_image_latest_id' => $latestImage ? (int) $latestImage->id : null,
+                'profile_image_approval' => $latestImage ? (int)$latestImage->profile_image_approval : null,
                 "about" => [
                     "about_me" => $user->about_me,
                     "about_match" => $user->about_match,
@@ -546,19 +574,19 @@ class ProfileController extends Controller
                 "custom_options" => [
                     "children" => [
                         "selected_id" => $user->children,
-                        "data" => CustomOption::where('parent_id', $children->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
+                        "data" => CustomOption::where('parent_id', $children?->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
                     ],
                     "exercise" => [
                         "selected_id" => $user->exercise,
-                        "data" => CustomOption::where('parent_id', $exercise->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
+                        "data" => CustomOption::where('parent_id', $exercise?->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
                     ],
                     "pets" => [
                         "selected_id" => $user->pets,
-                        "data" => CustomOption::where('parent_id', $pets->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
+                        "data" => CustomOption::where('parent_id', $pets?->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
                     ],
                     "income_level" => [
                         "selected_id" => $user->income_level,
-                        "data" => CustomOption::where('parent_id', $income_level->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
+                        "data" => CustomOption::where('parent_id', $income_level?->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
                     ],
                 ],
                 "info" => [
@@ -631,11 +659,13 @@ class ProfileController extends Controller
             'profile_name' => $user->profile_name,
             'age' => $age,
             'profile_image' => $profileimage,
-            'profile_image_approval' => $latestimage ? $latestimage->profile_image_approval : '',
+            'profile_image_approval' => $latestimage ? (int)$latestimage?->profile_image_approval : null,
             'email' => $user->email,
             'city' => $user->city,
             'region' => $user->region,
             'country' => $countryname,
+            'height' => $user->height,
+            'weight' => $user->weight,
 
         ];
 
@@ -1072,10 +1102,21 @@ class ProfileController extends Controller
             ]);
         }
     }
-    public function CustomOptions()
+
+
+    public function CustomOptions(Request $request)
     {
+        $lang = $request->lang ?? 'da';
         $user = Auth::user();
-        $customOptions = CustomOption::where('status', 1)->select('id', 'value', 'name')->get();
+        $customOptions = CustomOption::select('id', 'value', 'name', 'deleted_at')->whereNull('deleted_at')->where('status', 1)->get();
+        foreach ($customOptions as $opiotn) {
+            $transform = Translation::where('translatable_type', CustomOption::class)->where('language_code', $lang)->where('translatable_id', $opiotn->id)->where('field', $opiotn->name)->first();
+            if ($transform) {
+                $opiotn->value = $transform->value;
+            }
+        }
+
+
 
         $result = $customOptions
             ->groupBy('name')

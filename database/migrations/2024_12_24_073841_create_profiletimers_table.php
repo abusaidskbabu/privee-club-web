@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('profiletimers', function (Blueprint $table) {
             $table->integer('id');
             $table->integer('time')->nullable();
+            $table->decimal('stickness_level', 5, 2)->nullable();
             $table->timestamps();
             $table->timestamp('deleted_at')->useCurrent();
         });

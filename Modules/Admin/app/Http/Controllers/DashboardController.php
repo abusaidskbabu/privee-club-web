@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\{User, ProfileTimer, UserRate, UserImage, ReportReason, ReportUser, SupportRequest, BodyType, SexOrientation, Zodiac, LookngFor, Nationality, Region, City, HearAboutUs, Country, AppSetting, UserSuggestion};
 use App\Helpers\NotificationHelper;
 use Carbon\Carbon;
+use Helper;
+use Illuminate\Support\Facades\Session;
 
 class DashboardController extends Controller
 {
@@ -206,6 +208,7 @@ class DashboardController extends Controller
         ])
             ->where('admin_status', 1)
             ->where('profile_approval', 0)
+            ->whereNull('profie_rating_status')
             ->whereNull('deleted_at')
             ->orderByDesc('id')
             ->get()
@@ -339,18 +342,21 @@ class DashboardController extends Controller
     public function timer()
     {
 
-        $timer =  ProfileTimer::first();
-        return view('admin::profileTimer.timer', compact('timer'));
+        $time =  ProfileTimer::first();
+        return view('admin::profileTimer.timer', compact('time'));
     }
 
     public function timerUpdate(Request $request)
     {
-
         $request->validate([
-            'timer' => 'required|numeric',
+            'time' => 'required|numeric',
+            'stickness_level' => 'required',
         ]);
 
-        ProfileTimer::first()->update(['time' => $request->timer]);
+        ProfileTimer::first()->update([
+            'time' => $request->time,
+            'stickness_level' => $request->stickness_level
+        ]);
         return redirect()->back()->with('success', 'Rating window Time updated successfully!');
     }
 
@@ -897,7 +903,9 @@ class DashboardController extends Controller
             $country->country = $request->country;
             $country->short_name = $request->short_name;
             $country->save();
-
+            if ($country->save()) {
+                Helper::insertLanguage(Country::class, $country->id, Session::get('admin_language') ?? 'en', 'country', $country->country);
+            }
             return redirect()->route('admin.location.management')->with('success', $message);
         }
 
@@ -967,6 +975,9 @@ class DashboardController extends Controller
             $region->region = $request->region;
             $region->country_id = $request->country_id;
             $region->save();
+            if ($region->save()) {
+                Helper::insertLanguage(Region::class, $region->id, Session::get('admin_language') ?? 'en', 'region', $region->region);
+            }
 
             return redirect()->route('admin.location.management')->with('success', $message);
         }
@@ -1038,6 +1049,10 @@ class DashboardController extends Controller
             $city->region_id = $request->region_id;
             $city->save();
 
+            if ($city->save()) {
+                Helper::insertLanguage(City::class, $city->id, Session::get('admin_language') ?? 'en', 'city', $city->city);
+            }
+
             return redirect()->route('admin.location.management')->with('success', $message);
         }
 
@@ -1072,6 +1087,7 @@ class DashboardController extends Controller
         }
     }
 
+
     // Nationalities Management
     public function nationalitiesManagement()
     {
@@ -1103,8 +1119,9 @@ class DashboardController extends Controller
             ]);
 
             $nationality->nationality = $request->nationality;
-            $nationality->save();
-
+            if ($nationality->save()) {
+                Helper::insertLanguage(Nationality::class, $nationality->id, Session::get('admin_language') ?? 'en', 'nationality', $nationality->nationality);
+            }
             return redirect()->route('admin.nationalities.management')->with('success', $message);
         }
 

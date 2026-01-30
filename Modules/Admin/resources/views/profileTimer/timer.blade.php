@@ -42,40 +42,57 @@
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-lg-12">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-6">
 
                         <div class="card">
                             <div class="card-body">
                                 @if (session('success'))
                                     <div class="alert alert-success mt-2">{{ session('success') }}</div>
                                 @endif
-                                <form method="POST" action={{ route('admin.update-time') }} enctype="multipart/form-data">
+                                <form method="POST" action="{{ route('admin.update-time') }}"
+                                    enctype="multipart/form-data">
                                     @csrf
                                     <div class="row">
-                                        <div class="col-md-5 mb-2">
-                                            <label for="personal_trait" class="form-label">
-                                                Rating Window (in Hours)
-                                            </label>
-                                            <input type="text" class="form-control"
-                                                placeholder="Enter timer (e.g., 1 hour)" name="timer"
-                                                value="{{ old('time', $timer->time ?? '') }}">
-                                            @if ($errors->has('timer'))
-                                                <span class="text-danger">{{ $errors->first('timer') }}</span>
+                                        <div class="col-md-12 mb-3">
+                                            <label for="time" class="form-label">Rating Window (in Hours)</label>
+                                            <input type="text" id="time" name="time" class="form-control"
+                                                placeholder="Enter time (e.g., 1 hour)" value="{{ $time?->time }}">
+                                            @if ($errors->has('time'))
+                                                <div class="text-danger">{{ $errors->first('time') }}</div>
                                             @endif
                                         </div>
 
-                                        <div class="col-md-6">
-                                            <label for=""> Update</label>
-                                            <button type="submit" class="btnprimary">
-                                                <i class="fa-solid fa-rotate"></i> Update
-                                            </button>
+                                        <div class="col-md-12 mb-3">
+                                            <label for="stickness_level" class="form-label">Stickness Level</label>
+                                            <select id="stickness_level" name="stickness_level"
+                                                class="form-control form-select">
+                                                <option value="1.0"
+                                                    {{ isset($time) && $time->stickness_level == 1.0 ? 'selected' : '' }}>
+                                                    Lenient</option>
+                                                <option value="0.5"
+                                                    {{ isset($time) && $time->stickness_level == 0.5 ? 'selected' : '' }}>
+                                                    Moderate</option>
+                                                <option value="0.33"
+                                                    {{ isset($time) && $time->stickness_level == 0.33 ? 'selected' : '' }}>
+                                                    Strict</option>
+                                            </select>
+                                            @if ($errors->has('stickness_level'))
+                                                <div class="text-danger">{{ $errors->first('stickness_level') }}</div>
+                                            @endif
                                         </div>
                                     </div>
+
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fa-solid fa-rotate"></i> Update
+                                    </button>
                                 </form>
+
                             </div>
                         </div>
 
                     </div>
+                    <div class="col-md-3"></div>
                 </div>
             </div>
         </section>

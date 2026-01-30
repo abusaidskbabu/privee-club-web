@@ -222,6 +222,52 @@
                         <p>Custom Options</p>
                     </a>
                 </li>
+
+
+                <li class="nav-item">
+                    <a href="{{ route('admin.looking-for.index') }}"
+                        class="nav-link {{ request()->routeIs('admin.looking-for.index') ? 'active' : '' }}">
+                        <i class="fa fa-eye" aria-hidden="true"></i>
+                        <p>Looking For</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.sex-orientation.index') }}"
+                        class="nav-link {{ request()->routeIs('admin.sex-orientation.index') ? 'active' : '' }}">
+                        <i class="fa fa-american-sign-language-interpreting" aria-hidden="true"></i>
+                        <p>Sex Orientation</p>
+                    </a>
+                </li>
+
+
+                <li class="nav-item">
+                    <a href="{{ route('admin.zodiacSign.index') }}"
+                        class="nav-link {{ request()->routeIs('admin.zodiacSign.index') ? 'active' : '' }}">
+                        <i class="fa fa-sign-in" aria-hidden="true"></i>
+
+                        <p>Zodiac Sign</p>
+                    </a>
+                </li>
+
+
+                <li class="nav-item">
+                    <a href="{{ route('admin.body-types.index') }}"
+                        class="nav-link {{ request()->routeIs('admin.body-types.index') ? 'active' : '' }}">
+                        <i class="fa fa-female" aria-hidden="true"></i>
+                        <p>Body Type</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{ route('admin.hear-about-us.index') }}"
+                        class="nav-link {{ request()->routeIs('admin.hear-about-us.index') ? 'active' : '' }}">
+                        <i class="fa fa-podcast" aria-hidden="true"></i>
+                        <p>Hear About Us</p>
+                    </a>
+                </li>
+
+
+
                 <!--<li class="nav-item">-->
                 <!--    <a href="{{ route('admin.report.reason') }}" class="nav-link {{ Request::is('admin.report.reason') ? 'active' : '' }}">-->
                 <!--        <i class="fas fa-ban"></i>-->
@@ -280,7 +326,7 @@
                                 class="nav-link {{ request()->routeIs('admin.timer') ? 'active' : '' }}">
                                 <i
                                     class="{{ request()->routeIs('admin.timer') ? 'fas' : 'far' }} fa-circle nav-icon text-danger"></i>
-                                <p>Rating period</p>
+                                <p>Rating</p>
                             </a>
                         </li>
 

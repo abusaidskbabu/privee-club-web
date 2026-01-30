@@ -27,7 +27,9 @@ use  App\Models\{
     SupportRequest,
     blockedUsers,
     RateUserProfile,
-    UserSuggestion
+    UserSuggestion,
+    ProfileTimer,
+    Translation
 };
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -236,9 +238,15 @@ class UserController extends Controller
 
     // *********************************************************api to get hear abt us ********************************************************************
 
-    public function hearAboutUsListing()
+    public function hearAboutUsListing(Request $request)
     {
-        $data = HearAboutUs::get();
+        // $data = HearAboutUs::get();
+        $lang = $request->lang ?? 'da';
+        HearAboutUs::setLang($lang);
+        $data = HearAboutUs::with('translations')->whereNull('deleted_at')->orderBy('platform', 'asc')->get();
+
+
+
         return response()->json([
             "status_code" => 200,
             "status" => true,
@@ -268,9 +276,9 @@ class UserController extends Controller
 
             $user->save();
 
-            // Mail::send('email_registration', ['user' => $user], function($message) use ($user) {
-            //     $message->to($user->email, $user->profile_name)->subject('Registration Successful');
-            // });
+            Mail::send('email_registration', ['user' => $user], function ($message) use ($user) {
+                $message->to($user->email, $user->profile_name)->subject('Registration Successful');
+            });
 
             return response()->json([
                 "status_code" => 200,
@@ -285,10 +293,15 @@ class UserController extends Controller
             ], 500);
         }
     }
+
     // ******************************************************************* get lookingFor *********************************************************************
-    public function getLookingFor()
+    public function getLookingFor(Request $request)
     {
-        $data = LookngFor::get();
+
+        $lang = $request->lang ?? 'da';
+        LookngFor::setLang($lang);
+        $data = LookngFor::with('translations')->whereNull('deleted_at')->orderBy('looking_for', 'asc')->get();
+
         return response()->json([
             "status_code" => 200,
             "status" => true,
@@ -310,13 +323,10 @@ class UserController extends Controller
                     'looking_for_ids.required' => 'Please select atleast one option!'
                 ]
             );
-
             $user = Auth::User();
             $ids = $request->looking_for_ids;
-            // converting into string and save
             $user->looking_for = implode(',', $ids);
             $user->save();
-
             return response()->json([
                 "status_code" => 200,
                 "status" => true,
@@ -417,33 +427,41 @@ class UserController extends Controller
 
     // *****************************************************************************nationality ****************************************************************************************************
 
-    public function Nationality()
+    public function Nationality(Request $request)
     {
-        $data = Nationality::orderBy('nationality', 'asc')->get();;
+        $lang = $request->lang ?? 'da';
+        Nationality::setLang($lang);
+        $nationalities = Nationality::with('translations')->whereNull('deleted_at')->orderBy('nationality', 'asc')->get();
+
         return response()->json([
             "status_code" => 200,
             "status" => true,
+            "lang" => $lang,
             "message" => "Data detail retrive successfully",
-            "data" => $data
+            "data" => $nationalities
         ], 200);
     }
 
     // ********************************************************************************get region ***************************************************************************************************
 
-    public function getRegion()
+    public function getRegion(Request $request)
     {
-        $data = Region::get();
+        $lang = $request->lang ?? 'da';
+        Region::setLang($lang);
+        $data = Region::with('translations')->whereNull('deleted_at')->get();
+
         return response()->json([
             "status_code" => 200,
             "status" => true,
-            "message" => "Region retrive successfully",
+            "message" => "Region retrieved successfully",
             "data" => $data
         ], 200);
     }
 
     public function getCity(request $request)
     {
-
+        $lang = $request->lang ?? 'da';
+        City::setLang($lang);
 
         $request->validate([
             'region_id' => 'required'
@@ -453,7 +471,7 @@ class UserController extends Controller
         $region_id = $request->region_id;
 
 
-        $data = City::where('region_id', $region_id)->orderBy('city', 'asc')->get();
+        $data = City::with('translations')->whereNull('deleted_at')->where('region_id', $region_id)->orderBy('city', 'asc')->get();
 
         return response()->json([
             "status_code" => 200,
@@ -464,9 +482,17 @@ class UserController extends Controller
     }
 
 
-    public function bodyType()
+    public function bodyType(Request $request)
     {
-        $data = BodyType::get();
+        // $data = BodyType::get();
+        $lang = $request->lang ?? 'da';
+        BodyType::setLang($lang);
+        $data = BodyType::with('translations')->whereNull('deleted_at')->orderBy('body_type', 'asc')->get();
+
+
+
+
+
         return response()->json([
             "status_code" => 200,
             "status" => true,
@@ -477,12 +503,19 @@ class UserController extends Controller
 
 
 
-    public function sexOrientation()
+    public function sexOrientation(Request $request)
     {
-        $data = SexOrientation::get();
+        // $data = SexOrientation::get();
+        $lang = $request->lang ?? 'da';
+        SexOrientation::setLang($lang);
+        $data = SexOrientation::with('translations')->whereNull('deleted_at')->orderBy('sex_orientation', 'asc')->get();
+
+
+
         return response()->json([
             "status_code" => 200,
             "status" => true,
+            "lang" => $lang,
             "message" => "SexOrientationretrive successfully",
             "data" => $data
         ], 200);
@@ -490,12 +523,18 @@ class UserController extends Controller
 
 
 
-    public function zodiacSign()
+    public function zodiacSign(Request $request)
     {
-        $data = Zodiac::get();
+        // $data = Zodiac::get();
+        $lang = $request->lang ?? 'da';
+        Zodiac::setLang($lang);
+        $data = Zodiac::with('translations')->whereNull('deleted_at')->orderBy('Zodiac_Signs', 'asc')->get();
+
+
         return response()->json([
             "status_code" => 200,
             "status" => true,
+            "lang" => $lang,
             "message" => "Zodiac data ritreve successfully",
             "data" => $data
         ], 200);
@@ -589,13 +628,13 @@ class UserController extends Controller
         $userAccess->save();
 
 
-        // pass notification
-        NotificationHelper::sendToUser(
-            $request->id,
-            'New Private Access Request ',
-            $authUser->profile_name . ' has sent you a private access request.',
-            $authUser->id
-        );
+        //// pass notification
+        // NotificationHelper::sendToUser(
+        //     $request->id,
+        //     'New Private Access Request ',
+        //     $authUser->profile_name . ' has sent you a private access request.',
+        //     $authUser->id
+        // );
 
         return response()->json([
             'code' => 200,
@@ -715,13 +754,12 @@ class UserController extends Controller
             $requestData->save();
 
             //notification
-            NotificationHelper::sendToUser(
-                $senderId,
-                'Private Access Request Accepted',
-                $authUser->profile_name . 'has accepted your private access request.',
-                $authUser->id
-
-            );
+            // NotificationHelper::sendToUser(
+            //     $senderId,
+            //     'Private Access Request Accepted',
+            //     $authUser->profile_name . 'has accepted your private access request.',
+            //     $authUser->id
+            // );
 
             return response()->json([
                 'code' => 200,
@@ -776,7 +814,10 @@ class UserController extends Controller
             $title = "New Like Received";
             $body = $auth->profile_name . " liked your profile.";
 
-            NotificationHelper::notification($likeToUserId, $title, $body, $auth->id);
+            // if ((int)$likeToUserId > 0 && (int)$auth->id >= 1 && $title && $body) {
+            //     NotificationHelper::notification($likeToUserId, $title, $body, $auth->id);
+            // }
+
 
             $message = 'User liked successfully';
         } else {
@@ -800,6 +841,9 @@ class UserController extends Controller
             'message' => $message
         ]);
     }
+
+
+
 
     // *********************************************************************************like user list ********************************************************************
     public function likeUserList()
@@ -1182,6 +1226,66 @@ class UserController extends Controller
             return response()->json(['status' => true, 'message' => 'Profile rated successfully']);
         } catch (\Exception $e) {
             return response()->json(['status' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+
+
+    public function acceptUser()
+    {
+        $currentTime   = Carbon::now();
+        $profiletimers = (int) ProfileTimer::value('time');
+        $users = User::with([
+            'images' => function ($q) {
+                $q->where('type', 0);
+            },
+            'profile'
+        ])
+            ->where('admin_status', 1)
+            ->where('profile_approval', 0)
+            ->whereNull('deleted_at')
+            ->orderByDesc('id')
+            ->get()
+            ->map(function ($user) use ($profiletimers) {
+
+                // Default expiryTime
+                $user->expiryTime = null;
+
+                // Only calculate if approve time exists
+                if (!empty($user->admin_approve_time)) {
+                    $approveTime = Carbon::parse($user->admin_approve_time);
+                    $user->expiryTime = $approveTime->addHours($profiletimers);
+                }
+
+                return $user;
+            })
+            ->filter(function ($user) use ($currentTime) {
+
+                // keep users without approve time
+                if ($user->expiryTime === null) {
+                    return true;
+                }
+
+                // keep only non-expired users
+                return $user->expiryTime->greaterThan($currentTime);
+            })
+            ->values();
+
+
+        if (count($users) > 0) {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => "Data retrieve succesfully",
+                'data' => $users
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+                'message' => "Data not found",
+                'data' => null
+            ], 422);
         }
     }
 }

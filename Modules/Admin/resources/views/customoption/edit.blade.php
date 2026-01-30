@@ -25,6 +25,27 @@
                     <input type="text" class="form-control" name="name" value="{{ $customoption->name }}"
                         placeholder="Enter title" required>
                 </div> --}}
+
+
+                <div class="form-group">
+                    <label>Select Language</label>
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <form action="{{ url('/admin/change-language') }}" method="POST">
+                                @csrf
+                                <select class="form-control form-control-sm language-select">
+                                    <option value="da"
+                                        {{ Session::get('admin_language') == 'da' ? 'selected' : '' }}>Dansk
+                                    </option>
+                                    <option value="en"
+                                        {{ Session::get('admin_language') == 'en' ? 'selected' : '' }}>English
+                                    </option>
+                                </select>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+
                 <div class="form-group">
                     <label>Value</label>
                     <input type="text" class="form-control" name="value" value="{{ $customoption->value }}"

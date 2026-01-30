@@ -1,6 +1,6 @@
 <!-- Modal -->
 
-<div class="modal fade" id="CreateModalOpen" tabindex="-1" role="dialog">
+<div class="modal fade CreateModalOpen" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
 
         <div class="modal-content">
@@ -14,7 +14,24 @@
 
                 <div class="modal-body">
                     <div class="server_side_error"></div>
-
+                    <div class="form-group">
+                        <label>Select Language</label>
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <form action="{{ url('/admin/change-language') }}" method="POST">
+                                    @csrf
+                                    <select class="form-control form-control-sm language-select">
+                                        <option value="da"
+                                            {{ Session::get('admin_language') == 'da' ? 'selected' : '' }}>Dansk
+                                        </option>
+                                        <option value="en"
+                                            {{ Session::get('admin_language') == 'en' ? 'selected' : '' }}>English
+                                        </option>
+                                    </select>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
                     <div class="form-group">
                         <label>Parent</label>
                         <select name="parent_id" id="cutom_parent" class="form-control">

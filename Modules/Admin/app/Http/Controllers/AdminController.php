@@ -48,12 +48,13 @@ class AdminController extends Controller
             // update status
             $user->admin_status = $request->admin_status;
             $user->status  = 1;
+
             //  mail according to condn
             if ($request->admin_status == 1) {
                 $user->admin_approve_time = now();
 
                 if ($user->language == 'English') {
-                    // send email
+                    //// send email
                     Mail::send('admin::email.ApprovedUser_email_UK', ['user' => $user], function ($message) use ($user) {
                         $message->to($user->email, $user->profile_name)
                             ->subject('Approved Member');

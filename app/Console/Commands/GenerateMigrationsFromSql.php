@@ -17,7 +17,7 @@ class GenerateMigrationsFromSql extends Command
     public function handle()
     {
         $sqlFile = $this->argument('sql_file');
-        
+
         if (!file_exists($sqlFile)) {
             $this->error("SQL file not found: {$sqlFile}");
             return 1;
@@ -28,7 +28,7 @@ class GenerateMigrationsFromSql extends Command
 
         // Extract all CREATE TABLE statements
         $tables = $this->extractTables($sqlContent);
-        
+
         $this->info("Found " . count($tables) . " tables");
 
         // Generate migration files
@@ -46,51 +46,51 @@ class GenerateMigrationsFromSql extends Command
     protected function extractTables($sqlContent)
     {
         $tables = [];
-        
+
         // Match CREATE TABLE statements - handle multi-line and nested parentheses
         $pattern = '/CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?`?(\w+)`?\s*\((.*?)\)\s*ENGINE/is';
         preg_match_all($pattern, $sqlContent, $matches, PREG_SET_ORDER);
-        
+
         foreach ($matches as $match) {
             $tableName = $match[1];
             $tableBody = $match[2];
-            
+
             // Extract columns
             $columns = $this->parseColumns($tableBody);
-            
+
             // Extract indexes and keys (from ALTER TABLE statements)
             $indexes = $this->extractIndexes($sqlContent, $tableName);
-            
+
             // Check for AUTO_INCREMENT in MODIFY statements
             $this->checkAutoIncrement($sqlContent, $tableName, $columns);
-            
+
             $tables[$tableName] = [
                 'columns' => $columns,
                 'indexes' => $indexes,
             ];
         }
-        
+
         return $tables;
     }
 
     protected function parseColumns($tableBody)
     {
         $columns = [];
-        
+
         // Remove comments
         $tableBody = preg_replace('/COMMENT\s+[\'"][^\'"]*[\'"]/i', '', $tableBody);
-        
+
         // Split by comma, but be careful with nested parentheses and quotes
         $lines = [];
         $current = '';
         $depth = 0;
         $inQuotes = false;
         $quoteChar = '';
-        
+
         for ($i = 0; $i < strlen($tableBody); $i++) {
             $char = $tableBody[$i];
-            
-            if (($char === '"' || $char === "'") && ($i === 0 || $tableBody[$i-1] !== '\\')) {
+
+            if (($char === '"' || $char === "'") && ($i === 0 || $tableBody[$i - 1] !== '\\')) {
                 if (!$inQuotes) {
                     $inQuotes = true;
                     $quoteChar = $char;
@@ -109,32 +109,32 @@ class GenerateMigrationsFromSql extends Command
                     continue;
                 }
             }
-            
+
             $current .= $char;
         }
-        
+
         if (!empty(trim($current))) {
             $lines[] = trim($current);
         }
-        
+
         foreach ($lines as $line) {
             $line = trim($line);
             if (empty($line) || preg_match('/^(PRIMARY|KEY|INDEX|UNIQUE|FOREIGN|CONSTRAINT)/i', $line)) {
                 continue;
             }
-            
+
             // Extract column definition - handle backticks and regular names
             if (preg_match('/`?([a-zA-Z_][a-zA-Z0-9_]*)`?\s+(.+)/', $line, $colMatch)) {
                 $columnName = $colMatch[1];
                 $columnDef = trim($colMatch[2]);
-                
+
                 // Remove trailing comma if present
                 $columnDef = rtrim($columnDef, ',');
-                
+
                 $columns[$columnName] = $this->parseColumnDefinition($columnDef);
             }
         }
-        
+
         return $columns;
     }
 
@@ -150,7 +150,7 @@ class GenerateMigrationsFromSql extends Command
 
         // Check for NOT NULL first
         $isNotNull = preg_match('/\bNOT\s+NULL\b/i', $def);
-        
+
         // Check for unsigned
         if (preg_match('/\bUNSIGNED\b/i', $def)) {
             $column['unsigned'] = true;
@@ -162,7 +162,7 @@ class GenerateMigrationsFromSql extends Command
             // Auto increment columns are typically NOT NULL
             $isNotNull = true;
         }
-        
+
         // Set nullable based on NOT NULL
         if ($isNotNull) {
             $column['nullable'] = false;
@@ -179,10 +179,12 @@ class GenerateMigrationsFromSql extends Command
             // Remove ON UPDATE clause if present
             $default = preg_replace('/\s+ON\s+UPDATE\s+.*$/i', '', $default);
             $default = trim($default, "'\"");
-            
-            if (strtolower($default) !== 'null' && 
-                strtolower($default) !== 'current_timestamp' && 
-                strtolower($default) !== 'current_timestamp()') {
+
+            if (
+                strtolower($default) !== 'null' &&
+                strtolower($default) !== 'current_timestamp' &&
+                strtolower($default) !== 'current_timestamp()'
+            ) {
                 $column['default'] = $default;
             } elseif (strtolower($default) === 'current_timestamp' || strtolower($default) === 'current_timestamp()') {
                 $column['useCurrent'] = true;
@@ -244,41 +246,41 @@ class GenerateMigrationsFromSql extends Command
     protected function extractIndexes($sqlContent, $tableName)
     {
         $indexes = [];
-        
+
         // Look for ALTER TABLE statements for this table
         $pattern = "/ALTER TABLE\s+`?{$tableName}`?\s+(.*?);/is";
         preg_match_all($pattern, $sqlContent, $alterMatches);
-        
+
         foreach ($alterMatches[1] ?? [] as $alterBody) {
             // Primary key - can have multiple columns
             if (preg_match("/ADD\s+PRIMARY\s+KEY\s+\(([^)]+)\)/i", $alterBody, $pkMatch)) {
                 $cols = $this->extractColumnNames($pkMatch[1]);
                 $indexes[] = ['type' => 'primary', 'columns' => $cols];
             }
-            
+
             // Unique key
             if (preg_match("/ADD\s+UNIQUE\s+KEY\s+`?(\w+)`?\s+\(([^)]+)\)/i", $alterBody, $ukMatch)) {
                 $cols = $this->extractColumnNames($ukMatch[2]);
                 $indexes[] = ['type' => 'unique', 'name' => $ukMatch[1], 'columns' => $cols];
             }
-            
+
             // Regular index
             if (preg_match("/ADD\s+KEY\s+`?(\w+)`?\s+\(([^)]+)\)/i", $alterBody, $idxMatch)) {
                 $cols = $this->extractColumnNames($idxMatch[2]);
                 $indexes[] = ['type' => 'index', 'name' => $idxMatch[1], 'columns' => $cols];
             }
         }
-        
+
         return $indexes;
     }
-    
+
     protected function extractColumnNames($columnList)
     {
         $columns = [];
         preg_match_all('/`?(\w+)`?/', $columnList, $matches);
         return $matches[1] ?? [];
     }
-    
+
     protected function checkAutoIncrement($sqlContent, $tableName, &$columns)
     {
         // Look for MODIFY statements that set AUTO_INCREMENT
@@ -299,7 +301,7 @@ class GenerateMigrationsFromSql extends Command
         $filePath = database_path("migrations/{$fileName}");
 
         $columnsCode = $this->generateColumnsCode($tableInfo['columns'], $tableInfo['indexes']);
-        
+
         $migrationContent = <<<PHP
 <?php
 
@@ -339,44 +341,46 @@ PHP;
         $code = [];
         $hasId = false;
         $hasTimestamps = false;
-        
+
         // Check for timestamps first
         $hasCreatedAt = isset($columns['created_at']);
         $hasUpdatedAt = isset($columns['updated_at']);
         if ($hasCreatedAt && $hasUpdatedAt) {
             $hasTimestamps = true;
         }
-        
+
         foreach ($columns as $name => $column) {
             // Handle id column - check if it's auto_increment and unsigned bigint
             if ($name === 'id') {
                 // Check if it's a standard Laravel id (bigint unsigned auto_increment)
-                if ($column['auto_increment'] && 
-                    ($column['type'] === 'bigInteger' || $column['type'] === 'integer') && 
-                    $column['unsigned']) {
+                if (
+                    $column['auto_increment'] &&
+                    ($column['type'] === 'bigInteger' || $column['type'] === 'integer') &&
+                    $column['unsigned']
+                ) {
                     $code[] = "            \$table->id();";
                     $hasId = true;
                     continue;
                 }
             }
-            
+
             // Handle timestamps together
             if ($name === 'created_at' && $hasTimestamps) {
                 $code[] = "            \$table->timestamps();";
                 continue;
             }
-            
+
             // Skip updated_at if we already added timestamps()
             if ($name === 'updated_at' && $hasTimestamps) {
                 continue;
             }
-            
+
             $line = $this->generateColumnLine($name, $column);
             if ($line) {
                 $code[] = $line;
             }
         }
-        
+
         // Add indexes (skip primary key as it's handled by id() or primary key definition)
         foreach ($indexes as $index) {
             if ($index['type'] === 'primary') {
@@ -407,7 +411,7 @@ PHP;
                 }
             }
         }
-        
+
         return implode("\n", $code);
     }
 
@@ -415,30 +419,30 @@ PHP;
     {
         $method = $column['type'];
         $params = [];
-        
+
         // Add length for string/char
         if (in_array($method, ['string', 'char']) && isset($column['length'])) {
             $params[] = $column['length'];
         }
-        
+
         // Add precision/scale for decimal
         if ($method === 'decimal' && isset($column['precision'])) {
             $params[] = $column['precision'];
             $params[] = $column['scale'] ?? 0;
         }
-        
+
         $paramStr = !empty($params) ? ', ' . implode(', ', $params) : '';
         $line = "            \$table->{$method}('{$name}'{$paramStr})";
-        
+
         // Add modifiers
         if ($column['unsigned']) {
             $line .= "->unsigned()";
         }
-        
+
         if ($column['nullable']) {
             $line .= "->nullable()";
         }
-        
+
         if (isset($column['useCurrent']) && $column['useCurrent']) {
             $line .= "->useCurrent()";
         } elseif ($column['default'] !== null) {
@@ -451,29 +455,29 @@ PHP;
                 $line .= "->default('{$default}')";
             }
         }
-        
+
         if ($column['auto_increment']) {
             $line .= "->autoIncrement()";
         }
-        
+
         $line .= ";";
-        
+
         return $line;
     }
 
     protected function updateMigrationsTable()
     {
         $this->info("Updating migrations table...");
-        
+
         try {
             foreach ($this->migrationFiles as $file) {
                 $migrationName = str_replace('.php', '', $file);
-                
+
                 // Check if migration already exists
                 $exists = DB::table('migrations')
                     ->where('migration', $migrationName)
                     ->exists();
-                
+
                 if (!$exists) {
                     DB::table('migrations')->insert([
                         'migration' => $migrationName,

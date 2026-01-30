@@ -3,12 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\Translatable;
 
 class Region extends Model
 {
+  use Translatable;
 
   protected $table = 'region';
-  protected $guarded;
+  protected $guarded = [];
+  protected array $translatable = ['region'];
+
 
   public function country()
   {

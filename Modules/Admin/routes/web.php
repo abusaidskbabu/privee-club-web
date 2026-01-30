@@ -2,7 +2,19 @@
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
-use Modules\Admin\Http\Controllers\{AdminController, DashboardController, CommonController, ChildrenController, CustomOptionController};
+use Modules\Admin\Http\Controllers\{
+    AdminController,
+    DashboardController,
+    CommonController,
+    ChildrenController,
+    CustomOptionController,
+    LanguageController,
+    LookingForController,
+    SexOrientationController,
+    ZodiacSignController,
+    BodyTypesController,
+    HearAboutUsController
+};
 
 Route::get('/clear', function () {
     Artisan::call('config:clear');
@@ -25,15 +37,32 @@ Route::delete('/user/{id}', [AdminController::class, 'destroy'])->name('destroy'
 
 Route::post('/profile-approval/update', [AdminController::class, 'updateProfileApproval'])->name('profileApproval.update');
 Route::post('/user/status/update', [AdminController::class, 'updateLoginStatus'])->name('user.status.update');
+// Route::post('/admin/change-language', [LanguageController::class, 'change'])
+//     ->name('admin.change.language');
+
+
+
+
+
 
 
 Route::prefix('admin')->name('admin.')->group(function () {
+    Route::middleware('admin.access', 'admin.locale')->group(function () {
+
+        // Route::post('change-language', function (\Illuminate\Http\Request $request) {
+        //     session(['admin_language' => $request->language]);
+        //     return redirect()->back();
+        // })->name('admin.change.language');
 
 
-
-    Route::middleware('admin.access')->group(function () {
         Route::resource('children', ChildrenController::class);
         Route::resource('custom-options', CustomOptionController::class);
+        Route::resource('looking-for', LookingForController::class);
+        Route::resource('sex-orientation', SexOrientationController::class);
+        Route::resource('zodiacSign', ZodiacSignController::class);
+        Route::resource('body-types', BodyTypesController::class);
+        Route::resource('hear-about-us', HearAboutUsController::class);
+
 
 
         Route::get('logout', [AdminController::class, 'logout'])->name('logout');
@@ -113,3 +142,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('search-users-notification', [DashboardController::class, 'searchUsersForNotification'])->name('search.users.notification');
     });
 });
+
+
+
+
+Route::post('/admin/change-language', function (Illuminate\Http\Request $request) {
+    $request->validate([
+        'language' => 'required|in:en,da',
+    ]);
+    session(['admin_language' => $request->language]);
+    return response()->json([
+        'status' => true,
+        'message' => 'Language changed successfully',
+    ]);
+})->name('admin.change.language')->withoutMiddleware(['auth']);

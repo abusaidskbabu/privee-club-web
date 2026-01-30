@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
 
 <head>
     <meta charset="utf-8">
@@ -158,6 +158,36 @@
     <script>
         $(document).ready(function() {
             $('.commontable').DataTable();
+        });
+    </script>
+    <script>
+        $(document).on('change', '.language-select', function() {
+            let lang = this.value;
+            let token = '{{ csrf_token() }}';
+
+            fetch('{{ url('/admin/change-language') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': token,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        language: lang
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status) {
+                        console.log(data.message);
+                    } else {
+                        alert('Language change failed.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Something went wrong!');
+                });
         });
     </script>
     @yield('script')

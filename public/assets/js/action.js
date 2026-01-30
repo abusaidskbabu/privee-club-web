@@ -68,9 +68,9 @@ $(document).on('click', '.edit_modal_show', function(e) {
         }
     })
 });
-    $(document).on('click', '.CreateModalOpen', function(e) {
+    $(document).on('click', '.CreateModalOpenBtn', function(e) {
         e.preventDefault();
-        $('#CreateModalOpen').modal('show');
+        $('.CreateModalOpen').modal('show');
     });
 
 

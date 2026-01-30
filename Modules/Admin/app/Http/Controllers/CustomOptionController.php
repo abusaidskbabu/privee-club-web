@@ -7,9 +7,10 @@ use Illuminate\Http\Request;
 use Auth;
 use Hash;
 use Helper;
+use Illuminate\Support\Facades\Session;
 use App\Models\CustomOption;
 use Yajra\DataTables\DataTables;
-use App\Models\LeadingAndGovernor;
+use App\Models\Translation;
 
 use Illuminate\Support\Facades\Validator;
 
@@ -25,6 +26,8 @@ class CustomOptionController extends Controller
     public function index()
     {
         $customoptions = CustomOption::whereNull('deleted_at')->orderBy('id', 'desc')->get();
+
+
         $selectoptions = CustomOption::whereNull('deleted_at')->whereNull('parent_id')->orderBy('id', 'desc')->get();
         return view('admin::customoption.index', compact('customoptions', 'selectoptions'));
     }
@@ -69,10 +72,14 @@ class CustomOptionController extends Controller
             $data['parent_id'] = Null;
         }
         $data['status'] = 1;
-        $customoption = CustomOption::create($data);
+
+
+
+        $newCustomOption = CustomOption::create($data);
+        Helper::insertLanguage(CustomOption::class, $newCustomOption->id, Session::get('admin_language') ?? 'en', $newCustomOption->name, $newCustomOption->value);
         return response()->json([
             'type' => 'success',
-            'return' => $customoption,
+            'return' => $newCustomOption,
             'status' => 1,
             'message' => 'Custom Option added Successfully !',
         ], 200);
@@ -114,6 +121,8 @@ class CustomOptionController extends Controller
         $data['value'] = $request->value;
         $data['status'] = $request->status;
         $customoption->update($data);
+
+        Helper::insertLanguage(CustomOption::class, $id, Session::get('admin_language') ?? 'en', $customoption->name, $request->value);
         return response()->json([
             'type' => 'success',
             'status' => 1,

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use  App\Models\{User, LookngFor, UserRate, UserStatus, UserImage, ViewProfile, RequestModel, SeenStatus, Notification, UserReport, blockedUsers, RateUserProfile, ProfileTimer};
+use  App\Models\{User, LookngFor, UserRate, UserStatus, UserImage, ViewProfile, RequestModel, SeenStatus, Notification, UserReport, blockedUsers, RateUserProfile, ProfileTimer, CustomOption, UserLike, FavouriteUser};
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +11,55 @@ use App\Helpers\NotificationHelper;
 
 class HomeController extends Controller
 {
+
+    public function myRatemembers()
+    {
+        $user  = Auth::user();
+        $my_rated_members = UserRate::where('sender_id', $user->id)->get();
+
+        if ($my_rated_members) {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Data retrieved successfully',
+                'data' => $my_rated_members
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Data not found',
+                'data' => null,
+            ], 200);
+        }
+    }
+
+    public function deleteUserByMail(Request $request)
+    {
+        $user = User::where('email', $request->email)->first();
+
+        if ($user) {
+            $user->delete();
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'user deleted successfully',
+                'data' => null,
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => true,
+                'status_code' => 422,
+                'message' => 'user not found',
+            ], 200);
+        }
+    }
+
+    public function index()
+    {
+        $user  = Auth::user();
+    }
+
 
     public function home()
     {
@@ -183,7 +232,7 @@ class HomeController extends Controller
                     $userImage = $latestimage ? $latestimage->profile_image : $bestImage;
 
                     $user->profile_image = $userImage;
-                    $user->profile_image_approval = $latestimage ? $latestimage->profile_image_approval : '';
+                    $user->profile_image_approval = $latestimage ? (int)$latestimage->profile_image_approval : 0;
                     $user->country = $countryname;
                 }
                 return $users;
@@ -621,7 +670,21 @@ class HomeController extends Controller
     // ****************************view detail *********************
     public function viewDetail(request $request)
     {
+        $lang = $request->lang ?? 'da';
+        LookngFor::setLang($lang);
+        $data = LookngFor::with('translations')->whereNull('deleted_at')->orderBy('looking_for', 'asc')->get();
+
+        return response()->json([
+            "status_code" => 200,
+            "status" => true,
+            "lang" => $lang,
+            "message" => " LookngFor  detail retrive successfully",
+            "data" => $data
+        ], 200);
+
         try {
+
+
 
             $userid = $request->id;
             $latestimage2 = UserImage::where('user_id', $userid)->where('type', 0)->where('profile_image_approval', 1)->orderBy('created_at', 'DESC')->first();
@@ -641,8 +704,11 @@ class HomeController extends Controller
             $lookin_for = explode(',', $looking_forids);
 
 
-            $lookingforname = LookngFor::whereIn('id', $lookin_for)
-                ->pluck('looking_for');
+            // $lookingforname = LookngFor::whereIn('id', $lookin_for)
+            //     ->pluck('looking_for');
+            $lookingforname = LookngFor::with('translations')->whereIn('id', $lookin_for)->whereNull('deleted_at')->orderBy('looking_for', 'asc')->get();
+
+
 
 
             $latestimagePublic = UserImage::where('user_id', $userid)->where('type', 0)->where('profile_image_approval', 1)->orderBy('created_at', 'DESC')->first();
@@ -751,6 +817,16 @@ class HomeController extends Controller
             $rate_user_profile = RateUserProfile::where('rated_to', $userid)->avg('rating');
             $rated_user = RateUserProfile::where(['rated_to' => $userid, 'user_id' => $authuser->id])->count();
 
+            $children = CustomOption::where('id', $user->children)->select('id', 'value', 'name', 'parent_id')->first();
+            $exercise = CustomOption::where('id', $user->exercise)->select('id', 'value', 'name', 'parent_id')->first();
+            $pets = CustomOption::where('id', $user->pets)->select('id', 'value', 'name', 'parent_id')->first();
+            $income_level = CustomOption::where('id', $user->income_level)->select('id', 'value', 'name', 'parent_id')->first();
+
+
+            $my_voted_users =  UserRate::where('sender_id', (string) $user->id)->orderBy('created_at', 'DESC')->get();
+            $favorite_user = FavouriteUser::where('fav_to', (int)$user->id)->where('fav_by', $authuser->id)->first();
+
+
             $data = [
                 "sender_id"   => $authuser->id,
                 "block_status"   => $block_status > 0 ? 1 : 0,
@@ -767,9 +843,28 @@ class HomeController extends Controller
                 "user_rating_status" => $user->profie_rating_status,
                 "user_profile_rating" => $rate_user_profile ? (string) round($rate_user_profile, 1) : '',
                 "user_rated" => $rated_user > 0 ? 1 : 0,
+                "my_voted_users" => $my_voted_users ?? null,
                 "about" => [
                     "about_me" => $user->about_me,
                     "about_match" => $user->about_match,
+                ],
+                "custom_options" => [
+                    "children" => [
+                        "selected_id" => $user->children,
+                        "data" => CustomOption::where('parent_id', $children?->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
+                    ],
+                    "exercise" => [
+                        "selected_id" => $user->exercise,
+                        "data" => CustomOption::where('parent_id', $exercise?->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
+                    ],
+                    "pets" => [
+                        "selected_id" => $user->pets,
+                        "data" => CustomOption::where('parent_id', $pets?->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
+                    ],
+                    "income_level" => [
+                        "selected_id" => $user->income_level,
+                        "data" => CustomOption::where('parent_id', $income_level?->parent_id)->where('status', 1)->select('id', 'value', 'name')->get(),
+                    ],
                 ],
                 "info" => [
                     "profile_name" => $user->profile_name,
@@ -807,7 +902,9 @@ class HomeController extends Controller
                 "similar_profile" => $similar_profile,
                 "requested" => $response,
                 "like_status" => $user->like_status,
-                "add_to_fav" => $user->fav_user_status,
+                "add_to_fav" => $favorite_user ? 1 : 0,
+                "my_user_id" => $authuser->id,
+                "visiting_user_id" => (int) $request->id,
                 "private_photo_status" => $acceptedReq ? "true" : "false",
                 "sender_id" => (string) $authuser->id,
                 "sender_name" => $authuser->profile_name,
@@ -822,10 +919,26 @@ class HomeController extends Controller
             return response()->json(['status' => false, 'message' => $e->getMessage()], 422);
         }
     }
+
+
+
     // ***********************************************************************user rate ********************************************************************************
 
     public function userRate(Request $request)
     {
+
+        if ($request->reaction == 'delete') {
+            UserRate::query()->delete();
+            return response()->json([
+                'status' => true,
+                'status_code' => 422,
+                'message' => 'Deleted.',
+                'data' => null
+            ]);
+        }
+
+
+
         $request->validate([
             'reciever_id' => 'required',
             'reaction' => 'required|in:YES,OK,Maybe,No'
@@ -844,6 +957,15 @@ class HomeController extends Controller
         $reaction = $request->reaction;
         $points = $pointsMap[$reaction];
 
+        $already_rated =  UserRate::where('reciever_id', $request->reciever_id)->where('sender_id', (string) $user->id)->first();
+        if ($already_rated) {
+            return response()->json([
+                'status' => true,
+                'status_code' => 422,
+                'message' => 'You already rated this member.',
+                'data' => null
+            ]);
+        }
         $rate = UserRate::create([
             'sender_id' => (string) $user->id,
             'reciever_id' => (string) $request->reciever_id,
@@ -851,21 +973,53 @@ class HomeController extends Controller
             'points' => $points,
         ]);
 
-        // notifucation
-        NotificationHelper::sendToUser(
-            $request->reciever_id,
-            'User Rated',
-            $user->profile_name . ' has rated your profile with reaction: ' . $reaction,
-            $user->id
-        );
+        //// notifucation
+        // NotificationHelper::sendToUser(
+        //     $request->reciever_id,
+        //     'User Rated',
+        //     $user->profile_name . ' has rated your profile with reaction: ' . $reaction,
+        //     $user->id
+        // );
 
+
+
+        // ratings
+        $yes = UserRate::where('reciever_id', $request->reciever_id)->where('reaction', 'YES')->count();
+        $ok = UserRate::where('reciever_id', $request->reciever_id)->where('reaction', 'OK')->count();
+        $maybe = UserRate::where('reciever_id', $request->reciever_id)->where('reaction', 'Maybe')->count();
+        $no = UserRate::where('reciever_id', $request->reciever_id)->where('reaction', 'No')->count();
+        // Total points
+        $abc = $yes + $ok + $maybe + $no;
+        if ($abc == 0) {
+            $abc = 1;
+        }
+        // Avoid division by zero
+        $yesPct = $yes * $abc;
+        $okPct = $ok * $abc;
+        $maybePct = $maybe * $abc;
+        $noPct = $no * $abc;
+        $allRatings = UserRate::where('reciever_id', $user->id)->get();
+        $totalRaters = $allRatings->count();
+        $overallAvgPoints = $totalRaters > 0 ? $allRatings->sum('points') : 0;
 
 
         return response()->json([
             'status' => true,
             'status_code' => 200,
             'message' => 'User rated successfully',
-            'data' => $rate
+            'data' => $rate,
+            'ratings' => [
+                'yes' => $yes,
+                'ok' => $ok,
+                'maybe' => $maybe,
+                'no' => $no,
+
+                'yes_percentage' => $yesPct,
+                'ok_percentage' => $okPct,
+                'maybe_percentage' => $maybePct,
+                'no_percentage' => $noPct,
+                'overall_avg' => $overallAvgPoints,
+            ],
         ]);
     }
 
